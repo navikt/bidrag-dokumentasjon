@@ -19,9 +19,9 @@ flowchart LR
     Resultat -->|Mellom forskudd og løpende bidrag| E[Bruk beløp fra steg 1]
     Resultat -->|Lavere enn forskuddsats| F[fa:fa-ban Ikke lov til å fatte vedtak]
     end
-    BeløpshistorikkForskudd -..-> DelberegningBegrensetRevurdering
-    SjablonGrenseverdi -..-> DelberegningBegrensetRevurdering
-    A@{ shape: text, label: "Opprinnelig virkningstidspunkt" } -..-> DelberegningBegrensetRevurdering
+    BeløpshistorikkForskudd -...-> DelberegningBegrensetRevurdering
+    SjablonForskuddsats -...-> DelberegningBegrensetRevurdering
+    A@{ shape: text, label: "Opprinnelig virkningstidspunkt" } -...-> DelberegningBegrensetRevurdering
 
     class A className;
 ```
