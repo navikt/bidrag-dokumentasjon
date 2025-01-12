@@ -1,9 +1,5 @@
-Here is a simple flow chart:
-
-```mermaid
 flowchart LR
-    classDef className stroke:green,stroke-width:1px;
-
+    classDef input stroke:green,stroke-width:2px;
     subgraph steg1["Steg 1"]
         direction RL
         periode1["Periode 1"]
@@ -21,7 +17,6 @@ flowchart LR
     end
     BeløpshistorikkForskudd -...-> DelberegningBegrensetRevurdering
     SjablonForskuddsats -...-> DelberegningBegrensetRevurdering
-    A@{ shape: text, label: "Opprinnelig virkningstidspunkt" } -...-> DelberegningBegrensetRevurdering
+    input_opprinnelig_virknig[["Opprinnelig virkningstidspunkt"]] -...-o DelberegningBegrensetRevurdering
 
-    class A className;
-```
+    class input_opprinnelig_virknig input;

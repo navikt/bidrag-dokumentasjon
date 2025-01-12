@@ -1,0 +1,22 @@
+
+flowchart LR
+%% Main Node
+    DelberegningSumInntekt["DelberegningSumInntekt: Bidragsmottaker"]
+    DelberegningSumInntekt --->|gjelder| PersonBidragsmottaker["Person: Bidragsmottaker"]
+
+%% Relationships to InntektsrapporteringPeriode
+    DelberegningSumInntekt --> InntektsrapporteringPeriodeBarnetillegg["InntektsrapporteringPeriode: Barnetillegg"]
+    DelberegningSumInntekt --> InntektsrapporteringPeriodeLigningsinntekt["InntektsrapporteringPeriode: Ligningsinntekt"]
+    DelberegningSumInntekt --> InntektsrapporteringPeriodeKontantstøtte["InntektsrapporteringPeriode: Kontantstøtte"]
+
+%% Barnetillegg Relationships
+    InntektsrapporteringPeriodeBarnetillegg --->|gjelderBarn| PersonSøknadsbarn1["Person: Søknadsbarn 1"]
+    InntektsrapporteringPeriodeBarnetillegg --->|gjelder| PersonBidragsmottaker
+    InntektsrapporteringPeriodeBarnetillegg -->|inneholder| Inntektspost["Inntektspost: BARNETILLEGG_PENSJON"]
+
+%% Ligningsinntekt Relationships
+    InntektsrapporteringPeriodeLigningsinntekt --->|gjelder| PersonBidragsmottaker
+
+%% Kontantstøtte Relationships
+    InntektsrapporteringPeriodeKontantstøtte --->|gjelderBarn| PersonSøknadsbarn1
+    InntektsrapporteringPeriodeKontantstøtte --->|gjelder| PersonBidragsmottaker
