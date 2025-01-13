@@ -7,70 +7,66 @@ config:
 classDiagram
     direction LR
     class Vedtak
-    class Engangsbeløp_GEBYR_SKYLDNER_NAV {
-    }
-    class Engangsbeløp_GEBYR_MOTTAKER_NAV {
-    }
-    namespace Bidragspliktig {
+    class Engangsbeløp_GEBYR_SKYLDNER_NAV
+    class Engangsbeløp_GEBYR_MOTTAKER_NAV
+    class sjablon_FastsettelsesgebyrBeløp
+    class sjablon_NedreInntektsgrenseGebyrBeløp
+
+    namespace ManueltOverstyrt {
         class SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG {
+            ilagtGebyr = false
         }
         class MANUELT_OVERSTYRT_GEBYR_BIDRAGSPLIKTIG {
+            ilagtGebyr = false
+            begrunnelse = "Begrunnelse for manuelt overstyring"
         }
         class DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG {
+            sumInntekt = 900 000
+            ileggesGebyr = true
         }
-        class delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSPLIKTIG {
+        class DELBEREGNING_SUM_INNTEKT_BIDRAGSPLIKTIG {
+            skattepliktigInntekt = 900 000
+            barnetillegg = 0
+            totalinntekt = 900 000
         }
-        class PERSON_BIDRAGSPLIKTIG {
-        }
+        class PERSON_BIDRAGSPLIKTIG
     }
-    namespace Bidragsmottaker {
-        class PERSON_BIDRAGSMOTTAKER {
-        }
-        class SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER {
+    namespace BeregnetGebyr {
+        class PERSON_BIDRAGSMOTTAKER
+        class SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER  {
+            ilagtGebyr = true
         }
         class DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER {
+            sumInntekt = 900 000
+            ileggesGebyr = true
         }
-        class delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSMOTTAKER {
+        class DELBEREGNING_SUM_INNTEKT_BIDRAGSMOTTAKER {
+            skattepliktigInntekt = 890 000
+            barnetillegg = 10 000
+            totalinntekt = 900 000
         }
     }
 
-    class sjablon_FastsettelsesgebyrBeløp {
-    }
-
-    class sjablon_NedreInntektsgrenseGebyrBeløp {
-    }
 
     Vedtak --> Engangsbeløp_GEBYR_SKYLDNER_NAV
     Engangsbeløp_GEBYR_SKYLDNER_NAV --> SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG
-    Vedtak --> Engangsbeløp_GEBYR_MOTTAKER_NAV
-    Engangsbeløp_GEBYR_MOTTAKER_NAV --> SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER
-
-    class Delberegning {
-    }
-    Delberegning: - DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER
-    Delberegning: - delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSMOTTAKER
-    Delberegning: - sjablon_FastsettelsesgebyrBeløp
-    Delberegning: - PERSON_BIDRAGSMOTTAKER
-    Delberegning: - sjablon_NedreInntektsgrenseGebyrBeløp
-
-    class Delberegning_manuelt {
-    }
-    Delberegning_manuelt: - MANUELT_OVERSTYRT_GEBYR_BIDRAGSPLIKTIG
-    Delberegning_manuelt: - DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG
-    Delberegning_manuelt: - delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSPLIKTIG
-    Delberegning_manuelt: - sjablon_FastsettelsesgebyrBeløp
-    Delberegning_manuelt: - PERSON_BIDRAGSPLIKTIG
-    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER
-    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER --> delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSMOTTAKER
-    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> sjablon_FastsettelsesgebyrBeløp
-    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> PERSON_BIDRAGSMOTTAKER
-    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER --> sjablon_NedreInntektsgrenseGebyrBeløp
     SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG --> MANUELT_OVERSTYRT_GEBYR_BIDRAGSPLIKTIG
     SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG --> DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG
-    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG --> delberegning_DELBEREGNING_SUM_INNTEKT_BIDRAGSPLIKTIG
+    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG --> DELBEREGNING_SUM_INNTEKT_BIDRAGSPLIKTIG
     SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG --> sjablon_FastsettelsesgebyrBeløp
     SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG --> PERSON_BIDRAGSPLIKTIG
     DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSPLIKTIG --> sjablon_NedreInntektsgrenseGebyrBeløp
 
+    Vedtak --> Engangsbeløp_GEBYR_MOTTAKER_NAV
+    Engangsbeløp_GEBYR_MOTTAKER_NAV --> SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER
+    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER
+    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER --> DELBEREGNING_SUM_INNTEKT_BIDRAGSMOTTAKER
+    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> sjablon_FastsettelsesgebyrBeløp
+    SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER --> PERSON_BIDRAGSMOTTAKER
+    DELBEREGNING_INNTEKTSBASERT_GEBYR_BIDRAGSMOTTAKER --> sjablon_NedreInntektsgrenseGebyrBeløp
+
+
+
 
 click SLUTTBEREGNING_GEBYR_BIDRAGSPLIKTIG call visGrunnlag("grunnlagsobjekter/gebyr/sluttberegning_gebyr.md")
+click SLUTTBEREGNING_GEBYR_BIDRAGSMOTTAKER call visGrunnlag("grunnlagsobjekter/gebyr/sluttberegning_gebyr.md")
