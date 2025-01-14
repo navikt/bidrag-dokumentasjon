@@ -11,14 +11,15 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: false
+defaults:
+  run:
+    working-directory: ./frontend/bidrag-dokumentasjon
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          path: ./frontend/bidrag-dokumentasjon
       - name: Setup Node
         uses: actions/setup-node@v4
       - name: Install dependencies
