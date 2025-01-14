@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          path: frontend/bidrag-dokumentasjon
+          path: ./frontend/bidrag-dokumentasjon
       - name: Setup Node
         uses: actions/setup-node@v4
       - name: Install dependencies
