@@ -2,12 +2,22 @@
 
 **Referrer til**
 - DELBEREGNING_FORSKUDD
-- PERSON_SØKERFAMILIE
-- PERSON_BIDRAGSPLIKTIG
+- gjelder: PERSON_BIDRAGSPLIKTIG
+- gjelderBarn: PERSON_SØKNADSBARN
+> Beløpshistorikk for søknadsbarnet i samme sak (BP og søknadsbarn)
+> 
+| Felt           | Type                                                 | Beskrivelse |
+|----------------|------------------------------------------------------|-------------|
+| beløpHistorikk | Liste over beløp og periode (BeløpshistorikkPeriode) |             |
 
-| Felt           | Type             | Beskrivelse                  |
-|----------------|------------------|------------------------------|
-| beløpHistorikk | Liste over beløp | Liste over perioder og beløp |
+
+### BeløpshistorikkPeriode
+
+| Felt    | Type             | Beskrivelse |
+|---------|------------------|-------------|
+| periode | Årsmånedsperiode |             |
+| beløp   | Bigdecimal       |             |
+
 
 ## BELØPSHISTORIKK_BIDRAG
 
@@ -67,4 +77,25 @@
 |----------------|------------|-----------------------------------------------------------------------------|
 | høyesteInntekt | BigDecimal | Høyeste inntekt i DELBEREGNING_SUM_INNTEKT grunnlaget som det refereres til |
 
-## 1.2
+## PRIVAT_AVTALE
+
+> **Referrer til**
+> - gjelder: PERSON_BIDRAGSPLIKTIG
+> - gjelderBarn: PERSON_BARN (som privat avtalene gjelder for)
+
+> V2 så skal det bare gjelde for søknadsbarnet. I neste versjon så kan det gjelde for hvilken som helst barn<br>
+> Inneholder en liste over perioder og beløp for privat avtale
+
+| Felt     | Type                           | Beskrivelse |
+|----------|--------------------------------|-------------|
+| perioder | Liste over PrivatAvtalePeriode |             |
+
+#### PrivatAvtalePeriode
+
+| Felt    | Type             |
+|---------|------------------|
+| periode | Årsmåndesperiode |
+| beløp   |                  |
+
+
+## DELBEREGNING_PRIVAT_AVTALE_INDEKSREGULERT
