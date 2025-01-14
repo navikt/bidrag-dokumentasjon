@@ -17,7 +17,7 @@ import {MarkdownComponents} from "./components/CustomMarkdown.tsx";
 
 mermaid.initialize({
   startOnLoad: true,
-  flowchart: { useMaxWidth: true, useWidth: true, htmlLabels: true, curve: "basis" },
+  flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
   securityLevel: "loose",
   look: "handDrawn",
   theme: "base",
@@ -132,7 +132,7 @@ function GithubTreeView() {
     queryKey: ["gitPage", githubEnabled],
     queryFn: async (): Promise<GithubContent[]> => {
       if (!githubEnabled) return [];
-      const response = await octokit.request<GithubContent>("GET /repos/navikt/bidrag-dokumentasjon/contents", {
+      const response = await octokit.request("GET /repos/navikt/bidrag-dokumentasjon/contents", {
         owner: "navikt",
         repo: "bidrag-dokumentasjon",
       });
@@ -164,7 +164,7 @@ function GithubTree({ folder }: { folder: GithubContent }) {
   const { data: content } = useSuspenseQuery({
     queryKey: ["gitPage", folder.path],
     queryFn: async (): Promise<GithubContent[]> => {
-      const response = await octokit.request<GithubContent>(
+      const response = await octokit.request(
           `GET /repos/navikt/bidrag-dokumentasjon/contents/${folder.path}`,
           {
             owner: "navikt",
@@ -237,6 +237,7 @@ function MermaidChart() {
   return (
       <>
         <Modal
+            aria-label={""}
             style={{ maxHeight: "1000px", maxWidth: "max-content" }}
             open={showDetailsMarkdown != null}
             closeOnBackdropClick
