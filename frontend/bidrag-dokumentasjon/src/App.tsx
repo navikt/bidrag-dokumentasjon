@@ -154,7 +154,9 @@ function GithubTreeView() {
             {files.map((file) => (
                 <TreeItem itemId={file.download_url} label={file.name} />
             ))}
-            {content?.filter((file) => file.type === "dir").map((folder) => <GithubTree folder={folder} />)}
+            {content?.filter((file) => file.type === "dir")
+            .filter((folder) => folder.name != ".github" && folder.name != "frontend")
+            .map((folder) => <GithubTree folder={folder} />)}
           </TreeItem>
         </SimpleTreeView>
       </>
