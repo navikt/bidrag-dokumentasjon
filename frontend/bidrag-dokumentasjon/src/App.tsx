@@ -118,7 +118,7 @@ export default function DokumentasjonPage() {
 }
 function GithubTreeView() {
   const { setShowContent } = useAppContext();
-  const [githubEnabled, setGithubEnabled] = useState(false);
+  const [githubEnabled, setGithubEnabled] = useState(true);
 
   async function updateShowedContent(link: string) {
     if (link.startsWith("folder_")) return;

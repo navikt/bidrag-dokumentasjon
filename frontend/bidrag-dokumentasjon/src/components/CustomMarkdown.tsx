@@ -12,7 +12,7 @@ const CustomTableHeader = ({ children }) => (
     <th className="p-1 border border-gray-300 bg-gray-200 font-semibold ">{children}</th>
 );
 const CustomBlockQuote = ({ children }) => (
-    <blockquote className="bg-gray-200 border-l-4 border-gray-600 px-6 py-2 my-4 text-lg italic">{children}</blockquote>
+    <blockquote className="bg-gray-100 border-l-4 border-gray-600 px-6 py-2 my-4 text-lg italic">{children}</blockquote>
 );
 const CustomParagraph = ({ children }) => <p className="text-gray-800 leading-relaxed mb-4">{children}</p>;
 
