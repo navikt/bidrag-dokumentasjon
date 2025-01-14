@@ -1,0 +1,20 @@
+@import "tailwindcss/base";
+@import "@navikt/ds-css";
+@import "@navikt/bidrag-ui-common/styles/index.css";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.navds-tabs__tablist-wrapper {
+  width: max-content;
+}
+#root {
+  height: inherit;
+}
+body {
+  margin: 0;
+  background-color: #fff;
+  height: 100vh;
+}
+.mermaid svg {
+  height: inherit;
+}
