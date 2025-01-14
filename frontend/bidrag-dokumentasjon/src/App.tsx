@@ -19,6 +19,9 @@ import {XMarkIcon} from "@navikt/aksel-icons";
 import {EyeIcon} from "@navikt/aksel-icons";
 import {ChevronRightLastIcon} from "@navikt/aksel-icons";
 import {ChevronLeftIcon} from "@navikt/aksel-icons";
+import {Drawer} from "@mui/material";
+import {SetStateAction} from "react";
+import {Dispatch} from "react";
 
 mermaid.initialize({
   startOnLoad: true,
@@ -57,6 +60,8 @@ type Content = {
 
 interface AppContextType {
   showContent?: Content;
+  expandedFolders: string[];
+  setExpandedFolders: Dispatch<SetStateAction<string[]>>
   setShowContent: (content: Content) => void;
 }
 
@@ -70,6 +75,7 @@ export const useAppContext = () => {
 };
 export default function DokumentasjonPage() {
   const [showContent, setShowContent] = useState<Content | undefined>();
+  const [expandedFolders, setExpandedFolders] = useState<string[]>(["folder_root", `folder_dokumentasjon`]);
   const [isExpanded, setIsExpanded] = useState(true);
 
   async function readFileAsText(ev: ChangeEvent<HTMLInputElement>): Promise<Content> {
@@ -87,13 +93,12 @@ export default function DokumentasjonPage() {
   }
 
   return (
-      <AppContext.Provider value={{showContent, setShowContent}}>
+      <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders}}>
 
         <div className="h-full w-full flex flex-row [&_svg]:!max-w-full">
-          <VStack  id="drawer-navigation" className={`  transition-transform ${isExpanded ? "-translate-x" : "-translate-x-96"} bg-white border border-solid border-black`}>
-              <div className={"flex flex-row justify-end"}>
-                <Button className={"h-fit self-end"} variant={"primary"} size={"xsmall"} icon={isExpanded ? <ChevronLeftIcon/> : <ChevronRightLastIcon/>} onClick={()=>setIsExpanded((a)=>!a)}></Button>
-              </div>
+          <Button size={"xsmall"} variant={"primary-neutral"} onClick={()=>setIsExpanded(true)} icon={<ChevronRightLastIcon/>}></Button>
+          <Drawer open={isExpanded} onClose={()=>setIsExpanded(false)}>
+          <VStack  id="drawer-navigation" className={`bg-white border border-solid border-black`}>
               <Box
                   background="surface-default"
                   className={"border-t-2 border-black pl-2"}
@@ -122,7 +127,7 @@ export default function DokumentasjonPage() {
                 </React.Suspense>
               </Box>
             </VStack>
-
+          </Drawer>
           <MermaidChart/>
         </div>
       </AppContext.Provider>
@@ -130,14 +135,22 @@ export default function DokumentasjonPage() {
 }
 
 function GithubTreeView() {
-  const {setShowContent} = useAppContext();
+  const {setShowContent, expandedFolders, setExpandedFolders} = useAppContext();
   const [githubEnabled, setGithubEnabled] = useState(true);
 
-  async function updateShowedContent(link: string) {
-    if (link.startsWith("folder_")) return;
-    const content = await fetch(link);
+  async function updateShowedContent(event, itemId: string) {
+    if (itemId.startsWith("folder_")) {
+      setExpandedFolders((prev) => {
+        if (prev.includes(itemId)) {
+          return prev.filter((folder) => folder !== itemId);
+        }
+        return [...prev, itemId];
+      });
+      return;
+    }
+    const content = await fetch(itemId);
     content.text().then((data) => {
-      setShowContent({content: data, type: link.endsWith(".mermaid") ? "mermaid" : "markdown"});
+      setShowContent({content: data, type: itemId.endsWith(".mermaid") ? "mermaid" : "markdown"});
     });
   }
 
@@ -160,8 +173,8 @@ function GithubTreeView() {
           Hent fra github
         </Switch>
         <SimpleTreeView
-            defaultExpandedItems={["folder_root", `folder_dokumentasjon`]}
-            onItemClick={(event, itemId) => updateShowedContent(itemId)}
+            expandedItems={expandedFolders}
+            onItemClick={(event, itemId) => updateShowedContent(event, itemId)}
         >
           <TreeItem itemId="folder_root" label={"bidrag-dokumentasjon"}>
             {files.map((file) => (
