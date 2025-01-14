@@ -160,7 +160,7 @@ function GithubTreeView() {
           Hent fra github
         </Switch>
         <SimpleTreeView
-            defaultExpandedItems={["folder_root"]}
+            defaultExpandedItems={["folder_root", `folder_dokumentasjon`]}
             onItemClick={(event, itemId) => updateShowedContent(itemId)}
         >
           <TreeItem itemId="folder_root" label={"bidrag-dokumentasjon"}>
