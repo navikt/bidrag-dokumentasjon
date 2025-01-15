@@ -1,0 +1,42 @@
+---
+config:
+  title: Bidrag Endring
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+
+flowchart LR
+    classDef input stroke:green,stroke-width:2px;
+    subgraph steg1["Steg 1 - beregning"]
+        direction RL
+        periode1["Periode 1"]
+        periode2["Periode inneværende måned"]
+    end
+    steg1 --Siste løpende bidrag----> DelberegningEndringUnderGrense
+    subgraph "steg 2 - Sjekke grense 12%"
+        direction TB
+        BeløpshistorikkBidrag[[BeløpshistorikkBidrag]] -.-> DelberegningEndringUnderGrense
+        SjablonIndeksreguleringProsent[[SjablonIndeksreguleringProsent]] -.-> DelberegningEndringUnderGrense
+        PrivatAvtale[["`PrivatAvtale`"]] -.-> DelberegningEndringUnderGrense
+    end
+    subgraph "steg 3 - Resultat"
+        DelberegningEndringUnderGrense["`DelberegningUnderGrense
+            > siste løpende + periode / total > X%?
+        `"] --> Resultat{Er endring under grense?}
+        Resultat -->|Ja| Ja["
+            Ingen endring (VI)
+            Endre resultatkode til VI
+        "]
+        Resultat -->|Nei| Nei["
+            Innvilget vedtak selv om forrige perioder er under grense
+            Bruk resultatkode fra steg 1
+        "]
+    end
+
+    class input_opprinnelig_virknig input;
+
+
+click PrivatAvtale call visMarkdown("
+    #### Privat avtale
+
+    Beløp per periode
+")

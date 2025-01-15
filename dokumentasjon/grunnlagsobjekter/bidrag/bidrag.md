@@ -1,89 +1,102 @@
-## BELØPSHISTORIKK_FORSKUDD
+### BELØPSHISTORIKK_FORSKUDD
 
-**Referrer til**
-- DELBEREGNING_FORSKUDD
-- gjelder: PERSON_BIDRAGSPLIKTIG
-- gjelderBarn: PERSON_SØKNADSBARN
+> **Referer til**
+>
+> * gjelder: PERSON_BIDRAGSPLIKTIG
+> * gjelderBarn: PERSON_SØKNADSBARN
+>
 > Beløpshistorikk for søknadsbarnet i samme sak (BP og søknadsbarn)
-> 
-| Felt           | Type                                                 | Beskrivelse |
-|----------------|------------------------------------------------------|-------------|
-| beløpHistorikk | Liste over beløp og periode (BeløpshistorikkPeriode) |             |
 
+### BELØPSHISTORIKK_BIDRAG
 
-### BeløpshistorikkPeriode
+> **Referrer til**
+>
+> - PERSON_BIDRAGSMOTTAKER
+>- PERSON_BIDRAGSPLIKTIG
+>
+> Beløpshistorikk for søknadsbarnet i samme sak (BP og søknadsbarn)
+
+| Felt            | Type                                                 | Beskrivelse |
+|-----------------|------------------------------------------------------|-------------|
+| beløpshistorikk | Liste over beløp og periode (BeløpshistorikkPeriode) |             |
+
+#### BeløpshistorikkPeriode
 
 | Felt    | Type             | Beskrivelse |
 |---------|------------------|-------------|
 | periode | Årsmånedsperiode |             |
 | beløp   | Bigdecimal       |             |
 
+### DELBEREGNING_BEGRENSET_REVURDERING
 
-## BELØPSHISTORIKK_BIDRAG
+> Begrenset revurdering
+> Bidrag løper lavere enn forskuddsats
+> Da lager NAV ny søknad for å øke bidrag opp til forksuddsats
+>
+> Hvis det slår ut til FF - Ikke begrens til forskuddsats
+>
+> Referer til
+>
+> - BELØPSHISTORIKK_FORSKUDD
+> - SJABLON_FORSKUDDSATS
+> - PERSON_SØKNADSBARN
+> - PERSON_BIDRAGSPLIKTIG
 
-**Referrer til**
-- DELBEREGNING_BIDRAG
-- PERSON_BIDRAGSMOTTAKER
-- PERSON_BIDRAGSPLIKTIG
+| Felt            | Type       | Beskrivelse                                                                      |
+|-----------------|------------|----------------------------------------------------------------------------------|
+| løpendeForskudd | BigDecimal | Løpende forskuddsbeløp                                                           |
+| nyttBeløp       | BigDecimal | Nytt beløp fra beregning                                                         |
+| resultatBeløp   | BigDecimal | Resultat basert på sammenligning av nytt beløp med løpende beløp og forskuddsats |
 
-| Felt           | Type             | Beskrivelse                  |
-|----------------|------------------|------------------------------|
-| beløpHistorikk | Liste over beløp | Liste over perioder og beløp |
+### DELBEREGNING_ENDRING_UNDER_GRENSE
 
-## DELBEREGNING_BEGRENSET_REVURDERING
+> Referer til grunnlag
+>
+> - BELØPSHISTORIKK_BIDRAG
+> - SJABLON_TALL (Prosentgrense for endring av bidrag 0020)
+> > Grensefaktor som en sjablonverdi (12, 15, 10)
+>>   
+>> SJABLON skal basere seg på vedtakstidspunkt (og opprinnelig vedtakstidspunkt ved klage)
+>
+> Bruk opprinneligvirkningstidspunkt for innhenting av Sjablonverdi ved klage
+>
+> ---
+>
+> F*orslag:*
+>
+> *Hvis det er mindre enn ett år siden sist det ble endret så kan det endres uten å sjekk 15%
+> Ellers gjelder 15% regelen*
 
-**Regneresultat ved reberegning**
-- Dersom beløpet er satt lik 0 fordi beløpet opp forhøyelse av forskuddssatsen
-- Dersom beløpet er satt lik 0 fordi beløpet opp forhøyelse av bidragssatsen
+| Felt               | Type       | Beskrivelse |
+|--------------------|------------|-------------|
+| tidligereBeløp     | BigDecimal |             |
+| endringUnderGrense | Boolean    |             |
 
-**Hvis det er tilf IP er:**
-- BELØP_HISTORISK_SJABLON
-- SJABLON_SJABLONVERDI (0012, 0054)
-- SJABLON_FRISKRUDD
+### DELBEREGNING_HØYESTE_INNTEKT
 
-| Felt      | Type                                                                                       | Beskrivelse            |
-|-----------|--------------------------------------------------------------------------------------------|------------------------|
-| nyttBeløp | Lapertid forhøyelsesbeløp                                                                  | Nytt beløp i beregning |
-| nyttBeløp | Resultat basen på beregning av nytt beløp i forhold til opprinnelig beløp og forskuddssats |                        |
-
-## DELBEREGNING_ENDRING_UNDER_GRENSE
-
-**BeløpHistorikk**
-- dersomHistorikk er satt lik 0 dersom beløpet er satt lik 0 pga endring i forskuddssats (12, 16, 18)
-- dersomHistorikk er satt lik 0 dersom beløpet er satt lik 0 pga endring i bidragssats (12, 16, 18)
-
-**Hvis det er tilf IP er:**
-- SJABLON_FRISKRUDD
-- Endring i forskuddssats
-
-**Hvis det er tilf IP er:**
-- SJABLON_FRISKRUDD
-- Endring i bidragssats
-
-| Felt               | Type       | Beskrivelse          |
-|--------------------|------------|----------------------|
-| endringOver        | BigDecimal | Endring i beløp      |
-| endringUnderGrense | Boolean    | Endring under grense |
-
-## DELBEREGNING_HØYESTE_INNTEKT
-
-**Referrer til**
-- DELBEREGNING_INNTEKT
-- DELBEREGNING_SUM_INNTEKT
-
-**Gjøres for den beregningsperiode BP er satt periode (hvis periode er ulikt vedtak periode som omfatter delberegning)**
+> Referer til grunnlag
+>
+> ---
+>
+> For hver periode
+>
+> - Hente siste vedtak fra alle sakene til BP for hver periode i nåværende vedtak
+> - Hent DELBEREGNING_SUM_INNTEKT i vedtaket for periode som overlapper
+>
+> Går videre til delberegning bidragsevne
 
 | Felt           | Type       | Beskrivelse                                                                 |
 |----------------|------------|-----------------------------------------------------------------------------|
 | høyesteInntekt | BigDecimal | Høyeste inntekt i DELBEREGNING_SUM_INNTEKT grunnlaget som det refereres til |
 
-## PRIVAT_AVTALE
+### PRIVAT_AVTALE
 
 > **Referrer til**
+>
 > - gjelder: PERSON_BIDRAGSPLIKTIG
 > - gjelderBarn: PERSON_BARN (som privat avtalene gjelder for)
 
-> V2 så skal det bare gjelde for søknadsbarnet. I neste versjon så kan det gjelde for hvilken som helst barn<br>
+> V2 så skal det bare gjelde for søknadsbarnet. I neste versjon så kan det gjelde for hvilken som helst barn `<br>`
 > Inneholder en liste over perioder og beløp for privat avtale
 
 | Felt     | Type                           | Beskrivelse |
@@ -97,5 +110,17 @@
 | periode | Årsmåndesperiode |
 | beløp   |                  |
 
+### DELBEREGNING_PRIVAT_AVTALE_INDEKSREGULERT
 
-## DELBEREGNING_PRIVAT_AVTALE_INDEKSREGULERT
+> **Referrer til**
+>
+> - PRIVAT_AVTALE
+> - SJABLON_INDEKSREGULERING_PROSENT
+
+Beregning av indeksregulert beløp ved privat avtale. Periodiserer basert på sjablonverdien
+
+| Felt                | Type             |
+|---------------------|------------------|
+| periode             | Årsmåndesperiode |
+| beløp               | BigDecimal       |
+| beløpIndeksregulert | BigDecimal       |

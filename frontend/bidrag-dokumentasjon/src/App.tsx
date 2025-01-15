@@ -225,7 +225,7 @@ function MermaidChart() {
   const [showDetailsMarkdown, setShowDetailsMarkdown] = useState<string | null>(null);
 
   const isRendering = useRef(false);
-  const divRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLPreElement>(null);
   useEffect(() => {
     // @ts-ignore
     window.callbackKotlin = (link: string) => {
@@ -242,7 +242,13 @@ function MermaidChart() {
       .then(async (data) => {
         setShowDetailsMarkdown(data);
       });
+
     };
+    // @ts-ignore
+    window.visMarkdown = (innhold: string) => {
+      console.log(innhold.replace(/[\t\n]/g, " "))
+      setShowDetailsMarkdown(innhold.replace(/ +/g, " "));
+    }
   }, []);
   useEffect(() => {
     if (!showContent) return;
@@ -279,7 +285,7 @@ function MermaidChart() {
           </Modal.Body>
         </Modal>
         {showContent?.type == "mermaid" ? (
-            <div ref={divRef} className="mermaid h-full grow w-full max-w-full [&_svg]:!max-w-full"/>
+            <pre ref={divRef} className="mermaid h-full grow w-full max-w-full [&_svg]:!max-w-full"/>
         ) : showContent ? (
             <div className="pt-8 m-auto overflow-y-auto h-full w-[1100px] pl-8 pr-8 pb-8">
               <Markdown components={MarkdownComponents} remarkPlugins={[remarkGfm]} rehypePlugins={[remarkRaw]}>
