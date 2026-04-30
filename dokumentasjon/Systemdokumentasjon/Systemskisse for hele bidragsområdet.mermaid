@@ -1,0 +1,51 @@
+---
+config:
+  layout: dagre
+---
+graph LR
+
+    subgraph FSS
+        BidragSjablon["<b>Bidrag-Sjablon</b><br/>Inneholder sjablon-satser"]
+        BidragPerson["<b>Bidrag-Person</b></br/>Sammenstiller personinformasjon"]
+        BidragSak["<b>Bidrag-Sak</b></br/>Saksinformasjon"]
+        BidragDokument["<b>Bidrag-Dokument</b></br/>Integrasjon mellom Bisys og JOARK"]
+    end
+
+    subgraph Skya
+        Bisys["<b>Bisys</b><br/>Fatter vedtak"]
+    end
+
+    Bisys --> | Etterspør informasjon om reskontro & endrer RM | BidragReskontro
+    Bisys --> | Oppretter og endrer samhandlere | BidragSamhandler
+    Bisys --> | Sender vedtak & henter informasjon om utsatte og feilede transaksjoner| BidragRegnskap
+
+    subgraph GCP
+        BidragRegnskap["<b>Bidrag-Regnskap</b><br/>Transformerer bidragsvedtak<br/>til krav"]
+        BidragReskontro["<b>Bidrag-Reskontro</b></br/>Henter og transformerer informasjon fra reskontro"]
+        BidragAktoerregister["<b>Bidrag-Aktørregister</b></br/>Innholder informasjon om alle aktører i bidragssaker. Involverer samhandlere, personer, og HAAG/Utlands informasjon som ikke finnes i folkeregisteret/PDL."]
+        BidragSamhandler["<b>Bidrag-Samhandler</b></br/>Informasjon om bidragssamhandlere"]
+        BidragPersonHendelse["<b>Bidrag-Person-Hendelse</b></br/>Oppretter interne personhendelser fra PDL-hendelser"]
+        BidragAutomatiskJobb["<b>Bidrag-Automatisk-Jobb</b></br/>Automatiske batcher"]
+    end
+
+    BidragRegnskap --> |Henter informasjon om BM i sak| BidragSak
+    BidragRegnskap --> |Henter personopplysninger | BidragPerson
+    BidragRegnskap --> |Henter reskontroinfromasjon| BidragReskontro
+
+    BidragPersonHendelse --> | Personhendelser | BidragAktoerregister
+    BidragPersonHendelse --> | Personhendelser | BidragRegnskap
+    BidragPersonHendelse --> | Personhendelser | BidragAutomatiskJobb
+
+
+    BidragSamhandler --> | Oppretter/endrer samhandlere | BidragAktoerregister
+
+    subgraph Bidragskalkulator
+        BidragskalkulatorApi["<b>Bidragskalkulator-api</b></br/>Backend for bidragskalkulatoren"]
+        BidragskalkulatorUi["<b>Bidragskalkulator-Ui</b></br/>Frontend for bidragskalkulatoren"]
+
+    end
+
+    BidragskalkulatorApi --> |Henter personopplysninger| BidragPerson
+    BidragskalkulatorApi --> |Henter sjablon satser| BidragSjablon
+
+    BidragskalkulatorUi --> BidragskalkulatorApi
