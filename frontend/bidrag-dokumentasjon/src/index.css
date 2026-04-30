@@ -1,8 +1,6 @@
-@import "tailwindcss/base";
+@import "tailwindcss";
 @import "@navikt/ds-css";
 @import "@navikt/bidrag-ui-common/styles/index.css";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
 
 .navds-tabs__tablist-wrapper {
   width: max-content;
