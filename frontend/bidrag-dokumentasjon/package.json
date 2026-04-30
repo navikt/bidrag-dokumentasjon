@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sync-dokumentasjon": "node scripts/sync-dokumentasjon.mjs",
+    "predev": "npm run sync-dokumentasjon",
+    "prebuild": "npm run sync-dokumentasjon",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

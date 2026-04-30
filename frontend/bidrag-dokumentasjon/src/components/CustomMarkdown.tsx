@@ -2,14 +2,14 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 const CustomTable = ({ children }) => (
     <div className="overflow-x-auto pb-4 ">
-      <table className="table-auto border-collapse border border-gray-300 min-w-full">{children}</table>
+      <table className="markdown-table border-collapse border border-gray-300 w-full">{children}</table>
     </div>
 );
 const CustomTableRow = ({ children }) => <tr className="bg-gray-100 border-b border-gray-300">{children}</tr>;
 
-const CustomTableCell = ({ children }) => <td className="p-1 border border-gray-300">{children}</td>;
+const CustomTableCell = ({ children }) => <td className="p-1 border border-gray-300 align-top">{children}</td>;
 const CustomTableHeader = ({ children }) => (
-    <th className="p-1 border border-gray-300 bg-gray-200 font-semibold ">{children}</th>
+    <th className="p-1 border border-gray-300 bg-gray-200 font-semibold align-top">{children}</th>
 );
 const CustomBlockQuote = ({ children }) => (
     <blockquote className="bg-gray-100 border-l-4 border-gray-600 px-6 py-2 my-4 text-lg italic">{children}</blockquote>

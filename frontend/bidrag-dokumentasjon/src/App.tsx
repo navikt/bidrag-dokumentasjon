@@ -4,11 +4,10 @@ import "highlight.js/styles/default.css";
 import {ChevronLeftIcon, ChevronRightLastIcon} from "@navikt/aksel-icons";
 import {TreeItem} from "@mui/x-tree-view";
 import {SimpleTreeView} from "@mui/x-tree-view/SimpleTreeView";
-import {Alert, BodyShort, Box, Button, Heading, Loader, Modal, Switch, VStack} from "@navikt/ds-react";
+import {Alert, BodyShort, Button, Heading, Loader, Modal, VStack} from "@navikt/ds-react";
 import {useQuery} from "@tanstack/react-query";
 import mermaid from "mermaid";
-import {Octokit} from "octokit";
-import {ChangeEvent, createContext, Dispatch, SetStateAction, SyntheticEvent, useContext, useEffect, useRef, useState} from "react";
+import {createContext, Dispatch, SetStateAction, SyntheticEvent, useContext, useEffect, useRef, useState} from "react";
 import Markdown from "react-markdown";
 import remarkRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
@@ -23,14 +22,15 @@ mermaid.initialize({
   theme: "base",
 });
 
-const octokit = new Octokit({});
 const GITHUB_OWNER = "navikt";
 const GITHUB_REPO = "bidrag-dokumentasjon";
 const GITHUB_ROOT_PATH = "dokumentasjon";
-const GITHUB_BRANCH = "main";
-const APPLICATION_DOCS_PATH = `${GITHUB_ROOT_PATH}/systemdokumentasjon/applikasjoner`;
+const LOCAL_INDEX_PATH = `${GITHUB_ROOT_PATH}/index.json`;
+const APPLICATION_DOCS_PATH = `${GITHUB_ROOT_PATH}/applikasjoner`;
 let applicationDocumentIndexCache: Record<string, string> | null = null;
 let applicationDocumentIndexPromise: Promise<Record<string, string>> | null = null;
+let localContentIndexCache: Record<string, GithubContent[]> | null = null;
+let localContentIndexPromise: Promise<Record<string, GithubContent[]>> | null = null;
 type GithubRequestError = {
   status?: number;
   message?: string;
@@ -113,14 +113,6 @@ function getGithubErrorDetails(error: unknown): GithubErrorDetails {
   };
 }
 
-function shouldRetryGithubRequest(failureCount: number, error: unknown): boolean {
-  if (isGithubRateLimitError(error)) {
-    return false;
-  }
-
-  return failureCount < 2;
-}
-
 function sortGithubContent(content: GithubContent[]): GithubContent[] {
   return [...content].sort((left, right) => {
     if (left.type !== right.type) {
@@ -131,16 +123,32 @@ function sortGithubContent(content: GithubContent[]): GithubContent[] {
   });
 }
 
-function getFolderItemIds(content: GithubContent[]): string[] {
-  return content.filter((item) => item.type === "dir").map((item) => `folder_${item.path}`);
+function getFileItemId(path: string): string {
+  return `file_${path}`;
 }
 
-function getGithubRawFileUrl(path: string): string {
-  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
+function getPathFromFileItemId(itemId: string): string {
+  return itemId.replace(/^file_/, "");
+}
+
+function formatSidebarName(name: string, isFile: boolean): string {
+  let formatted = isFile ? name.replace(/\.[^/.]+$/, "") : name;
+  formatted = formatted.replace(/_/g, " ");
+
+  if (formatted.length === 0) {
+    return name;
+  }
+
+  return `${formatted.charAt(0).toUpperCase()}${formatted.slice(1)}`;
+}
+
+function getLocalFileUrl(path: string): string {
+  const basePath = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+  return `${basePath}${path}`;
 }
 
 async function fetchTextFromUrl(url: string, errorMessage: string): Promise<string> {
-  const response = await fetch(url);
+  const response = await fetch(url, {cache: "no-store"});
 
   if (!response.ok) {
     throw new Error(errorMessage);
@@ -150,7 +158,32 @@ async function fetchTextFromUrl(url: string, errorMessage: string): Promise<stri
 }
 
 async function fetchGithubTextByPath(path: string): Promise<string> {
-  return fetchTextFromUrl(getGithubRawFileUrl(path), `Klarte ikke å hente ${path} fra GitHub.`);
+  return fetchTextFromUrl(getLocalFileUrl(path), `Klarte ikke å hente ${path} lokalt.`);
+}
+
+async function getLocalContentIndex(): Promise<Record<string, GithubContent[]>> {
+  if (localContentIndexCache) {
+    return localContentIndexCache;
+  }
+
+  if (!localContentIndexPromise) {
+    localContentIndexPromise = fetchTextFromUrl(getLocalFileUrl(LOCAL_INDEX_PATH), "Klarte ikke å hente lokal dokumentasjonsindeks.")
+    .then((raw) => {
+      const parsed = JSON.parse(raw) as Record<string, GithubContent[]>;
+      localContentIndexCache = parsed;
+      return parsed;
+    })
+    .finally(() => {
+      localContentIndexPromise = null;
+    });
+  }
+
+  return localContentIndexPromise;
+}
+
+async function getLocalFolderContent(path: string): Promise<GithubContent[]> {
+  const index = await getLocalContentIndex();
+  return sortGithubContent(index[path] ?? []);
 }
 
 function createMissingApplicationMarkdown(applicationId: string): string {
@@ -158,7 +191,7 @@ function createMissingApplicationMarkdown(applicationId: string): string {
 }
 
 function createApplicationLoadErrorMarkdown(applicationId: string): string {
-  return `# Klarte ikke å åpne applikasjonsbeskrivelse\n\nVi fant en kobling fra diagrammet til **${applicationId}**, men markdown-filen kunne ikke lastes akkurat nå.\n\nPrøv igjen senere, eller åpne applikasjonen manuelt fra mappen \`systemdokumentasjon/applikasjoner\` i sidepanelet.`;
+  return `# Klarte ikke å åpne applikasjonsbeskrivelse\n\nVi fant en kobling fra diagrammet til **${applicationId}**, men markdown-filen kunne ikke lastes akkurat nå.\n\nPrøv igjen senere, eller åpne applikasjonen manuelt fra mappen \`applikasjoner\` i sidepanelet.`;
 }
 
 function createFileLoadErrorMarkdown(fileName: string): string {
@@ -167,6 +200,41 @@ function createFileLoadErrorMarkdown(fileName: string): string {
 
 function createMermaidRenderErrorMarkdown(): string {
   return `# Klarte ikke å vise diagram\n\nInnholdet som ble åpnet kunne ikke tolkes som et gyldig Mermaid-diagram.\n\nKontroller at filen finnes, at den ikke returnerte en feilside fra GitHub, og at Mermaid-syntaksen er gyldig.`;
+}
+
+function createVirtualFolder(path: string): GithubContent {
+  const name = path.split("/").pop() ?? path;
+
+  return {
+    name,
+    path,
+    sha: "",
+    size: 0,
+    url: "",
+    html_url: "",
+    git_url: "",
+    download_url: path,
+    type: "dir",
+    _links: {
+      self: "",
+      git: "",
+      html: "",
+    },
+  };
+}
+
+function ensureRootFolders(content: GithubContent[]): GithubContent[] {
+  const requiredRootFolders = [
+    `${GITHUB_ROOT_PATH}/systemdokumentasjon`,
+    APPLICATION_DOCS_PATH,
+  ];
+
+  const knownPaths = new Set(content.map((item) => item.path));
+  const missingFolders = requiredRootFolders
+  .filter((folderPath) => !knownPaths.has(folderPath))
+  .map((folderPath) => createVirtualFolder(folderPath));
+
+  return [...content, ...missingFolders];
 }
 
 function normalizeApplicationKey(value: string): string {
@@ -197,17 +265,9 @@ async function getApplicationDocumentIndex(): Promise<Record<string, string>> {
   }
 
   if (!applicationDocumentIndexPromise) {
-    applicationDocumentIndexPromise = octokit
-    .request(`GET /repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${APPLICATION_DOCS_PATH}`, {
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
-    })
-    .then((response) => {
-      if (!Array.isArray(response.data)) {
-        throw new Error("Uventet respons for applikasjonsmappen.");
-      }
-
-      const index = buildApplicationDocumentIndex(response.data as GithubContent[]);
+    applicationDocumentIndexPromise = getLocalFolderContent(APPLICATION_DOCS_PATH)
+    .then((content) => {
+      const index = buildApplicationDocumentIndex(content);
       applicationDocumentIndexCache = index;
       return index;
     })
@@ -220,17 +280,27 @@ async function getApplicationDocumentIndex(): Promise<Record<string, string>> {
 }
 
 async function resolveApplicationDocumentPath(applicationId: string): Promise<string | undefined> {
-  const index = await getApplicationDocumentIndex();
-  const directKey = normalizeApplicationKey(applicationId);
-  const kebabKey = normalizeApplicationKey(toKebabCase(applicationId));
+  const guessedPath = `${APPLICATION_DOCS_PATH}/${toKebabCase(applicationId)}.md`;
 
-  return index[directKey] ?? index[kebabKey];
+  try {
+    const index = await getApplicationDocumentIndex();
+    const directKey = normalizeApplicationKey(applicationId);
+    const kebabKey = normalizeApplicationKey(toKebabCase(applicationId));
+
+    return index[directKey] ?? index[kebabKey] ?? guessedPath;
+  } catch {
+    // Fallback when GitHub API listing fails (rate-limit/network)
+    return guessedPath;
+  }
 }
 
 function TreeLabel({name, badge}: { name: string; badge: string }) {
+  const isFile = badge === "fil";
+  const displayName = formatSidebarName(name, isFile);
+
   return (
       <span className="tree-label">
-        <span className="tree-label__name" title={name}>{name}</span>
+        <span className="tree-label__name" title={displayName}>{displayName}</span>
         <span className="tree-label__badge">{badge}</span>
       </span>
   );
@@ -270,30 +340,9 @@ export default function DokumentasjonPage() {
   const [showContent, setShowContent] = useState<Content | undefined>();
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-
-  async function readFileAsText(ev: ChangeEvent<HTMLInputElement>): Promise<Content | undefined> {
-    const files = ev.target.files;
-    if (!files || files.length === 0) return undefined;
-
-    const file = files[0];
-    const fileBuffer = await file.text();
-
-    return {content: fileBuffer, type: file.name.endsWith(".mermaid") ? "mermaid" : "markdown"};
-  }
-
-  async function openFile(ev: ChangeEvent<HTMLInputElement>) {
-    const fileBuffer = await readFileAsText(ev);
-    const file = ev.target.files?.[0];
-    if (!fileBuffer || !file) return;
-
-    setSelectedFileName(file.name);
-    setShowContent(fileBuffer);
-  }
 
   function resetContent() {
     setShowContent(undefined);
-    setSelectedFileName(null);
   }
 
   return (
@@ -303,16 +352,13 @@ export default function DokumentasjonPage() {
               <aside className="sidebar-container">
                 <VStack id="drawer-navigation" gap="space-4" className="sidebar-panel">
                   <div className="sidebar-header">
-                    <div>
-                      <button
-                          type="button"
-                          className="sidebar-header__home-link"
-                          onClick={resetContent}
-                      >
-                        Bidrag-dokumentasjon
-                      </button>
-                      <Heading size="small" level="1">Kilder</Heading>
-                    </div>
+                    <button
+                        type="button"
+                        className="sidebar-header__home-link"
+                        onClick={resetContent}
+                    >
+                      Bidrag-dokumentasjon
+                    </button>
                     <Button
                         size="small"
                         variant="tertiary-neutral"
@@ -322,36 +368,10 @@ export default function DokumentasjonPage() {
                       Skjul
                     </Button>
                   </div>
-                  <Box className="sidebar-section">
-                    <Heading size="xsmall" level="2">Last lokal fil</Heading>
-                    <BodyShort size="small" className="sidebar-copy">
-                      Åpne en lokal markdown- eller mermaid-fil uten å bruke GitHub-kvoten.
-                    </BodyShort>
-                    <label htmlFor="file_input" className="file-picker-card">
-                      <span className="file-picker-card__title">Velg fil fra maskinen</span>
-                      <span className="file-picker-card__meta">
-                        {selectedFileName ?? "Støtter .md, .markdown og .mermaid"}
-                      </span>
-                    </label>
-                    <input
-                        id="file_input"
-                        type="file"
-                        name="Last fra fil"
-                        accept=".mermaid,.md,.markdown"
-                        onClick={(ev) => ((ev.target as HTMLInputElement).value = "")}
-                        onChange={(event) => {
-                          void openFile(event);
-                        }}
-                        className="file-picker-input"
-                    />
-                  </Box>
-                  <Box className="sidebar-section sidebar-section--fill">
-                    <Heading size="xsmall" level="2">GitHub</Heading>
-                    <BodyShort size="small" className="sidebar-copy">
-                      Bla i dokumentasjonen direkte fra repoet og åpne filer ved behov.
-                    </BodyShort>
-                    <GithubTreeView/>
-                  </Box>
+                  <BodyShort size="small" className="sidebar-copy">
+                    Oversikt over dokumentasjon av systemene for bidragsområdet i Nav.
+                  </BodyShort>
+                  <GithubTreeView/>
                 </VStack>
               </aside>
           ) : (
@@ -362,7 +382,7 @@ export default function DokumentasjonPage() {
                   onClick={() => setIsExpanded(true)}
                   icon={<ChevronRightLastIcon aria-hidden/>}
               >
-                Kilder
+                Åpne
               </Button>
           )}
           <MermaidChart/>
@@ -373,7 +393,6 @@ export default function DokumentasjonPage() {
 
 function GithubTreeView() {
   const {setShowContent, expandedFolders, setExpandedFolders} = useAppContext();
-  const [githubEnabled, setGithubEnabled] = useState(true);
 
   async function updateShowedContent(_event: SyntheticEvent, itemId: string) {
     if (itemId.startsWith("folder_")) {
@@ -386,60 +405,42 @@ function GithubTreeView() {
       return;
     }
 
+    if (!itemId.startsWith("file_")) {
+      return;
+    }
+
+    const filePath = getPathFromFileItemId(itemId);
+
     try {
-      const fileName = itemId.split("/").pop() ?? itemId;
-      const data = await fetchTextFromUrl(itemId, `Klarte ikke å hente ${fileName}.`);
-      setShowContent({content: data, type: itemId.endsWith(".mermaid") ? "mermaid" : "markdown"});
+      const data = await fetchGithubTextByPath(filePath);
+      setShowContent({content: data, type: filePath.endsWith(".mermaid") ? "mermaid" : "markdown"});
     } catch {
-      const fileName = itemId.split("/").pop() ?? itemId;
+      const fileName = filePath.split("/").pop() ?? filePath;
       setShowContent({content: createFileLoadErrorMarkdown(fileName), type: "markdown"});
     }
   }
 
   const {data: content = [], error, isLoading} = useQuery<GithubContent[]>({
-    queryKey: ["gitPage", GITHUB_ROOT_PATH, githubEnabled],
-    enabled: githubEnabled,
-    retry: shouldRetryGithubRequest,
+    queryKey: ["gitPage", GITHUB_ROOT_PATH],
+    enabled: true,
+    retry: false,
     queryFn: async (): Promise<GithubContent[]> => {
-      const response = await octokit.request(`GET /repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_ROOT_PATH}`, {
-        owner: GITHUB_OWNER,
-        repo: GITHUB_REPO,
-      });
-      return response.data as GithubContent[];
+      return getLocalFolderContent(GITHUB_ROOT_PATH);
     },
   });
 
-  const sortedContent = sortGithubContent(content);
+  const sortedContent = sortGithubContent(ensureRootFolders(content));
   const files = sortedContent.filter((file) => file.type === "file");
   const folders = sortedContent
   .filter((file) => file.type === "dir")
   .filter((folder) => folder.name !== ".github" && folder.name !== "frontend");
 
-  useEffect(() => {
-    if (!githubEnabled || folders.length === 0) return;
-
-    const folderIds = getFolderItemIds(folders);
-    setExpandedFolders((prev) => {
-      const missing = folderIds.filter((folderId) => !prev.includes(folderId));
-      return missing.length === 0 ? prev : [...prev, ...missing];
-    });
-  }, [folders, githubEnabled, setExpandedFolders]);
-
   return (
       <VStack gap="space-4" className="github-section">
-        <div className="github-toolbar">
-          <Switch size="small" checked={githubEnabled} onChange={(e) => setGithubEnabled(e.target.checked)}>
-            Hent fra GitHub
-          </Switch>
-        </div>
         <GithubInfo error={error}/>
-        {!githubEnabled ? (
-            <BodyShort size="small" className="sidebar-empty-state">
-              GitHub-visningen er skrudd av. Bruk lokal fil eller slå på bryteren for å hente fra repoet.
-            </BodyShort>
-        ) : isLoading && content.length === 0 ? (
+        {isLoading && content.length === 0 ? (
             <div className="tree-loading-state">
-              <Loader size="large" title="Laster GitHub-innhold"/>
+              <Loader size="large" title="Laster dokumentasjon"/>
             </div>
         ) : error ? null : (
             <div className="tree-shell">
@@ -450,7 +451,7 @@ function GithubTreeView() {
                   }}
               >
                 {files.map((file) => (
-                    <TreeItem key={file.path} itemId={file.download_url} label={<TreeLabel name={file.name} badge="fil"/>}/>
+                    <TreeItem key={file.path} itemId={getFileItemId(file.path)} label={<TreeLabel name={file.name} badge="fil"/>}/>
                 ))}
                 {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
               </SimpleTreeView>
@@ -461,19 +462,15 @@ function GithubTreeView() {
 }
 
 function GithubTree({folder}: { folder: GithubContent }) {
-  const {expandedFolders, setExpandedFolders} = useAppContext();
+  const {expandedFolders} = useAppContext();
   const folderItemId = `folder_${folder.path}`;
   const isExpanded = expandedFolders.includes(folderItemId);
   const {data: content = [], error, isLoading} = useQuery<GithubContent[]>({
     queryKey: ["gitPage", folder.path],
     enabled: isExpanded,
-    retry: shouldRetryGithubRequest,
+    retry: false,
     queryFn: async (): Promise<GithubContent[]> => {
-      const response = await octokit.request(`GET /repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${folder.path}`, {
-        owner: GITHUB_OWNER,
-        repo: GITHUB_REPO,
-      });
-      return response.data as GithubContent[];
+      return getLocalFolderContent(folder.path);
     },
   });
 
@@ -482,15 +479,6 @@ function GithubTree({folder}: { folder: GithubContent }) {
   const folders = sortedContent.filter((file) => file.type === "dir");
   const treeError = error ? getGithubErrorDetails(error) : null;
 
-  useEffect(() => {
-    if (!isExpanded || folders.length === 0) return;
-
-    const childFolderIds = getFolderItemIds(folders);
-    setExpandedFolders((prev) => {
-      const missing = childFolderIds.filter((folderId) => !prev.includes(folderId));
-      return missing.length === 0 ? prev : [...prev, ...missing];
-    });
-  }, [folders, isExpanded, setExpandedFolders]);
 
   return (
       <TreeItem itemId={folderItemId} label={<TreeLabel name={folder.name} badge="mappe"/>}>
@@ -501,7 +489,7 @@ function GithubTree({folder}: { folder: GithubContent }) {
             <TreeItem itemId={`error_${folder.path}`} label={<TreeLabel name={treeError.title} badge="feil"/>}/>
         ) : null}
         {files.map((file) => (
-            <TreeItem key={file.path} itemId={file.download_url} label={<TreeLabel name={file.name} badge="fil"/>}/>
+            <TreeItem key={file.path} itemId={getFileItemId(file.path)} label={<TreeLabel name={file.name} badge="fil"/>}/>
         ))}
         {folders.map((childFolder) => (
             <GithubTree key={childFolder.path} folder={childFolder}/>
@@ -527,14 +515,7 @@ function LandingPage() {
               <span className="landing-page__card-icon" aria-hidden="true">🗂️</span>
               <Heading size="xsmall" level="3">Bla i dokumentasjon</Heading>
               <BodyShort size="small" className="landing-page__card-text">
-                Bruk sidepanelet til venstre for å hente dokumentasjon direkte fra GitHub-repoet.
-              </BodyShort>
-            </div>
-            <div className="landing-page__card">
-              <span className="landing-page__card-icon" aria-hidden="true">📂</span>
-              <Heading size="xsmall" level="3">Last opp lokal fil</Heading>
-              <BodyShort size="small" className="landing-page__card-text">
-                Du kan også åpne lokale <code>.mermaid</code>-, <code>.md</code>- eller <code>.markdown</code>-filer direkte fra maskinen din.
+                Bruk sidepanelet til venstre for å vise dokumentasjon.
               </BodyShort>
             </div>
             <div className="landing-page__card">
@@ -585,7 +566,9 @@ function MermaidChart() {
       });
     };
     window.visGrunnlag = (link: string) => {
-      fetchGithubTextByPath(link)
+      const normalizedPath = link.startsWith(`${GITHUB_ROOT_PATH}/`) ? link : `${GITHUB_ROOT_PATH}/${link.replace(/^\//, "")}`;
+
+      fetchGithubTextByPath(normalizedPath)
       .then(async (data) => {
         setShowDetailsMarkdown(data);
       })
@@ -598,22 +581,21 @@ function MermaidChart() {
       setShowDetailsMarkdown(innhold.replace(/ +/g, " "));
     };
     window.visApplikasjon = (applicationId: string) => {
+      setShowDetailsMarkdown(`# Laster applikasjonsbeskrivelse\n\nHenter **${applicationId}** ...`);
+
       void (async () => {
         try {
           const applicationPath = await resolveApplicationDocumentPath(applicationId);
 
           if (!applicationPath) {
-            setShowDetailsMarkdown(null);
-            setShowContent({content: createMissingApplicationMarkdown(applicationId), type: "markdown"});
+            setShowDetailsMarkdown(createMissingApplicationMarkdown(applicationId));
             return;
           }
 
           const data = await fetchGithubTextByPath(applicationPath);
-          setShowDetailsMarkdown(null);
-          setShowContent({content: data, type: "markdown"});
+          setShowDetailsMarkdown(data);
         } catch {
-          setShowDetailsMarkdown(null);
-          setShowContent({content: createApplicationLoadErrorMarkdown(applicationId), type: "markdown"});
+          setShowDetailsMarkdown(createApplicationLoadErrorMarkdown(applicationId));
         }
       })();
     };

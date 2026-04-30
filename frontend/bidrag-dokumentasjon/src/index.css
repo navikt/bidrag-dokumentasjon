@@ -25,6 +25,21 @@ body {
   color: #1f2937;
 }
 
+.markdown-table {
+  table-layout: fixed;
+}
+
+.markdown-table th,
+.markdown-table td {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.markdown-table th:first-child,
+.markdown-table td:first-child {
+  width: 45%;
+}
+
 .mermaid svg {
   height: inherit;
 }
