@@ -27,6 +27,10 @@ const octokit = new Octokit({});
 const GITHUB_OWNER = "navikt";
 const GITHUB_REPO = "bidrag-dokumentasjon";
 const GITHUB_ROOT_PATH = "dokumentasjon";
+const GITHUB_BRANCH = "main";
+const APPLICATION_DOCS_PATH = `${GITHUB_ROOT_PATH}/systemdokumentasjon/applikasjoner`;
+let applicationDocumentIndexCache: Record<string, string> | null = null;
+let applicationDocumentIndexPromise: Promise<Record<string, string>> | null = null;
 type GithubRequestError = {
   status?: number;
   message?: string;
@@ -129,6 +133,98 @@ function sortGithubContent(content: GithubContent[]): GithubContent[] {
 
 function getFolderItemIds(content: GithubContent[]): string[] {
   return content.filter((item) => item.type === "dir").map((item) => `folder_${item.path}`);
+}
+
+function getGithubRawFileUrl(path: string): string {
+  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
+}
+
+async function fetchTextFromUrl(url: string, errorMessage: string): Promise<string> {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(errorMessage);
+  }
+
+  return response.text();
+}
+
+async function fetchGithubTextByPath(path: string): Promise<string> {
+  return fetchTextFromUrl(getGithubRawFileUrl(path), `Klarte ikke å hente ${path} fra GitHub.`);
+}
+
+function createMissingApplicationMarkdown(applicationId: string): string {
+  return `# Fant ikke applikasjonsbeskrivelse\n\nDet finnes foreløpig ingen registrert applikasjonsside for **${applicationId}**.\n\nLegg til en markdown-fil under \`${APPLICATION_DOCS_PATH}\` hvis applikasjonen skal kunne åpnes fra diagrammet.`;
+}
+
+function createApplicationLoadErrorMarkdown(applicationId: string): string {
+  return `# Klarte ikke å åpne applikasjonsbeskrivelse\n\nVi fant en kobling fra diagrammet til **${applicationId}**, men markdown-filen kunne ikke lastes akkurat nå.\n\nPrøv igjen senere, eller åpne applikasjonen manuelt fra mappen \`systemdokumentasjon/applikasjoner\` i sidepanelet.`;
+}
+
+function createFileLoadErrorMarkdown(fileName: string): string {
+  return `# Klarte ikke å åpne fil\n\nFilen **${fileName}** kunne ikke hentes akkurat nå.\n\nDette kan skyldes at filen ikke finnes, at GitHub svarte med en feil, eller at innholdet ikke er tilgjengelig fra nettleseren. Prøv igjen senere.`;
+}
+
+function createMermaidRenderErrorMarkdown(): string {
+  return `# Klarte ikke å vise diagram\n\nInnholdet som ble åpnet kunne ikke tolkes som et gyldig Mermaid-diagram.\n\nKontroller at filen finnes, at den ikke returnerte en feilside fra GitHub, og at Mermaid-syntaksen er gyldig.`;
+}
+
+function normalizeApplicationKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function toKebabCase(value: string): string {
+  return value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/_/g, "-").toLowerCase();
+}
+
+function buildApplicationDocumentIndex(content: GithubContent[]): Record<string, string> {
+  const index: Record<string, string> = {};
+
+  content
+  .filter((item) => item.type === "file")
+  .filter((item) => item.name.endsWith(".md"))
+  .forEach((item) => {
+    const fileNameWithoutExt = item.name.replace(/\.md$/, "");
+    index[normalizeApplicationKey(fileNameWithoutExt)] = item.path;
+  });
+
+  return index;
+}
+
+async function getApplicationDocumentIndex(): Promise<Record<string, string>> {
+  if (applicationDocumentIndexCache) {
+    return applicationDocumentIndexCache;
+  }
+
+  if (!applicationDocumentIndexPromise) {
+    applicationDocumentIndexPromise = octokit
+    .request(`GET /repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${APPLICATION_DOCS_PATH}`, {
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+    })
+    .then((response) => {
+      if (!Array.isArray(response.data)) {
+        throw new Error("Uventet respons for applikasjonsmappen.");
+      }
+
+      const index = buildApplicationDocumentIndex(response.data as GithubContent[]);
+      applicationDocumentIndexCache = index;
+      return index;
+    })
+    .finally(() => {
+      applicationDocumentIndexPromise = null;
+    });
+  }
+
+  return applicationDocumentIndexPromise;
+}
+
+async function resolveApplicationDocumentPath(applicationId: string): Promise<string | undefined> {
+  const index = await getApplicationDocumentIndex();
+  const directKey = normalizeApplicationKey(applicationId);
+  const kebabKey = normalizeApplicationKey(toKebabCase(applicationId));
+
+  return index[directKey] ?? index[kebabKey];
 }
 
 function TreeLabel({name, badge}: { name: string; badge: string }) {
@@ -290,9 +386,14 @@ function GithubTreeView() {
       return;
     }
 
-    const content = await fetch(itemId);
-    const data = await content.text();
-    setShowContent({content: data, type: itemId.endsWith(".mermaid") ? "mermaid" : "markdown"});
+    try {
+      const fileName = itemId.split("/").pop() ?? itemId;
+      const data = await fetchTextFromUrl(itemId, `Klarte ikke å hente ${fileName}.`);
+      setShowContent({content: data, type: itemId.endsWith(".mermaid") ? "mermaid" : "markdown"});
+    } catch {
+      const fileName = itemId.split("/").pop() ?? itemId;
+      setShowContent({content: createFileLoadErrorMarkdown(fileName), type: "markdown"});
+    }
   }
 
   const {data: content = [], error, isLoading} = useQuery<GithubContent[]>({
@@ -467,35 +568,63 @@ function LandingPage() {
 }
 
 function MermaidChart() {
-  const {showContent} = useAppContext();
+  const {showContent, setShowContent} = useAppContext();
   const [showDetailsMarkdown, setShowDetailsMarkdown] = useState<string | null>(null);
 
   const isRendering = useRef(false);
   const divRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
-    // @ts-ignore
     window.callbackKotlin = (link: string) => {
-      fetch(link)
-      .then((res) => res.text())
+      fetchTextFromUrl(link, `Klarte ikke å hente Kotlin-kilden fra ${link}.`)
       .then(async (data) => {
         setShowDetailsMarkdown(`${"```kotlin\n"}${data}\n${"```"}`);
+      })
+      .catch(() => {
+        setShowDetailsMarkdown("# Klarte ikke å hente Kotlin-koden\n\nLenken i diagrammet returnerte ikke gyldig innhold.");
       });
     };
-    // @ts-ignore
     window.visGrunnlag = (link: string) => {
-      fetch(`https://raw.githubusercontent.com/navikt/bidrag-dokumentasjon/refs/heads/main/${link}`)
-      .then((res) => res.text())
+      fetchGithubTextByPath(link)
       .then(async (data) => {
         setShowDetailsMarkdown(data);
+      })
+      .catch(() => {
+        setShowDetailsMarkdown("# Klarte ikke å hente grunnlag\n\nMarkdown-filen som diagrammet peker til kunne ikke lastes.");
       });
     };
-    // @ts-ignore
     window.visMarkdown = (innhold: string) => {
       console.log(innhold.replace(/[\t\n]/g, " "));
       setShowDetailsMarkdown(innhold.replace(/ +/g, " "));
     };
-  }, []);
+    window.visApplikasjon = (applicationId: string) => {
+      void (async () => {
+        try {
+          const applicationPath = await resolveApplicationDocumentPath(applicationId);
+
+          if (!applicationPath) {
+            setShowDetailsMarkdown(null);
+            setShowContent({content: createMissingApplicationMarkdown(applicationId), type: "markdown"});
+            return;
+          }
+
+          const data = await fetchGithubTextByPath(applicationPath);
+          setShowDetailsMarkdown(null);
+          setShowContent({content: data, type: "markdown"});
+        } catch {
+          setShowDetailsMarkdown(null);
+          setShowContent({content: createApplicationLoadErrorMarkdown(applicationId), type: "markdown"});
+        }
+      })();
+    };
+
+    return () => {
+      delete window.callbackKotlin;
+      delete window.visGrunnlag;
+      delete window.visMarkdown;
+      delete window.visApplikasjon;
+    };
+  }, [setShowContent]);
 
   useEffect(() => {
     if (!showContent) return;
@@ -516,8 +645,11 @@ function MermaidChart() {
       }
       svgPanZoom("#mermaidSvg");
     })
-    .catch((error) => console.error("HERE", error));
-  }, [showContent]);
+    .catch((error) => {
+      console.error("Klarte ikke å rendre Mermaid-diagram", error);
+      setShowContent({content: createMermaidRenderErrorMarkdown(), type: "markdown"});
+    });
+  }, [setShowContent, showContent]);
 
   return (
       <>

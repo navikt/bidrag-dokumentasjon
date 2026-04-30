@@ -21,7 +21,7 @@ const CustomEmphasis = ({ children }) => <em className="text-blue-500">{children
 const CustomStrong = ({ children }) => <strong className="text-black not-italic">{children}</strong>;
 
 const CustomLink = ({ href, children }) => (
-    <a href={href} className="text-green-500 underline" target="_blank">
+    <a href={href} className="text-green-500 underline" target="_blank" rel="noopener noreferrer">
       {children}
     </a>
 );

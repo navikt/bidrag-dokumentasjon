@@ -29,6 +29,16 @@ body {
   height: inherit;
 }
 
+.mermaid .clickable {
+  cursor: pointer;
+}
+
+.mermaid .clickable:hover > rect,
+.mermaid .clickable:hover > polygon,
+.mermaid .clickable:hover > path {
+  filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.18));
+}
+
 .app-shell {
   display: flex;
   flex-direction: row;
@@ -85,10 +95,9 @@ body {
   border: none;
   background: none;
   cursor: pointer;
-  font-size: var(--a-font-size-body-small, 0.875rem);
+  font-size: 0.875rem;
   color: #2563eb;
   font-weight: 500;
-  text-decoration: none;
   transition: color 120ms ease, text-decoration-color 120ms ease;
   text-decoration: underline;
   text-decoration-color: transparent;
