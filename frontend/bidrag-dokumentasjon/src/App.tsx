@@ -100,8 +100,7 @@ export default function DokumentasjonPage() {
           <Drawer open={isExpanded} onClose={()=>setIsExpanded(false)}>
           <VStack  id="drawer-navigation" className={`bg-white border border-solid border-black`}>
               <Box
-                  background="surface-default"
-                  className={"border-t-2 border-black pl-2"}
+                  className={"bg-white border-t-2 border-black pl-2"}
               >
                 <Heading size="xsmall">Last lokal fil</Heading>
                 <input
@@ -115,11 +114,7 @@ export default function DokumentasjonPage() {
                 />
               </Box>
               <Box
-                  className="w-[400px] h-full"
-                  borderRadius={"medium"}
-                  borderColor="border-default"
-                  borderWidth="2"
-                  padding={"2"}
+                  className="w-[400px] h-full rounded-md border-2 border-black p-2"
               >
                 <Heading size="xsmall">Github</Heading>
                 <React.Suspense fallback={<Loader/>}>
