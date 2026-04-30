@@ -30,16 +30,22 @@ body {
 }
 
 .app-shell {
-  position: relative;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar-container {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
 }
 
 .sidebar-open-button {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1201;
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin: 1rem 0.5rem;
 }
 
 .sidebar-drawer-paper {

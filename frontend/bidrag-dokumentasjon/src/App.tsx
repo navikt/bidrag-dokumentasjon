@@ -1,7 +1,6 @@
 import "@cubone/react-file-manager/dist/style.css";
 import "highlight.js/styles/default.css";
 
-import {Drawer} from "@mui/material";
 import {ChevronLeftIcon, ChevronRightLastIcon} from "@navikt/aksel-icons";
 import {TreeItem} from "@mui/x-tree-view";
 import {SimpleTreeView} from "@mui/x-tree-view/SimpleTreeView";
@@ -144,7 +143,7 @@ function GithubInfo({error}: { error: unknown }) {
   const errorDetails = getGithubErrorDetails(error);
 
   return (
-      <VStack gap="3" className="github-info-stack">
+      <VStack gap="space-4" className="github-info-stack">
         <Alert variant="warning" size="small">
           <Heading spacing size="xsmall" level="3">{errorDetails.title}</Heading>
           <BodyShort size="small">{errorDetails.message}</BodyShort>
@@ -193,8 +192,57 @@ export default function DokumentasjonPage() {
 
   return (
       <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders}}>
-        <div className="app-shell h-full w-full flex flex-row [&_svg]:!max-w-full">
-          {!isExpanded ? (
+        <div className="app-shell h-full w-full flex flex-row [&_svg]:max-w-full!">
+          {isExpanded ? (
+              <aside className="sidebar-container">
+                <VStack id="drawer-navigation" gap="space-4" className="sidebar-panel">
+                  <div className="sidebar-header">
+                    <div>
+                      <BodyShort size="small" className="sidebar-header__eyebrow">Bidrag-dokumentasjon</BodyShort>
+                      <Heading size="small" level="1">Kilder</Heading>
+                    </div>
+                    <Button
+                        size="small"
+                        variant="tertiary-neutral"
+                        onClick={() => setIsExpanded(false)}
+                        icon={<ChevronLeftIcon aria-hidden/>}
+                    >
+                      Skjul
+                    </Button>
+                  </div>
+                  <Box className="sidebar-section">
+                    <Heading size="xsmall" level="2">Last lokal fil</Heading>
+                    <BodyShort size="small" className="sidebar-copy">
+                      Åpne en lokal markdown- eller mermaid-fil uten å bruke GitHub-kvoten.
+                    </BodyShort>
+                    <label htmlFor="file_input" className="file-picker-card">
+                      <span className="file-picker-card__title">Velg fil fra maskinen</span>
+                      <span className="file-picker-card__meta">
+                        {selectedFileName ?? "Støtter .md, .markdown og .mermaid"}
+                      </span>
+                    </label>
+                    <input
+                        id="file_input"
+                        type="file"
+                        name="Last fra fil"
+                        accept=".mermaid,.md,.markdown"
+                        onClick={(ev) => ((ev.target as HTMLInputElement).value = "")}
+                        onChange={(event) => {
+                          void openFile(event);
+                        }}
+                        className="file-picker-input"
+                    />
+                  </Box>
+                  <Box className="sidebar-section sidebar-section--fill">
+                    <Heading size="xsmall" level="2">GitHub</Heading>
+                    <BodyShort size="small" className="sidebar-copy">
+                      Bla i dokumentasjonen direkte fra repoet og åpne filer ved behov.
+                    </BodyShort>
+                    <GithubTreeView/>
+                  </Box>
+                </VStack>
+              </aside>
+          ) : (
               <Button
                   size="small"
                   variant="secondary-neutral"
@@ -204,59 +252,7 @@ export default function DokumentasjonPage() {
               >
                 Kilder
               </Button>
-          ) : null}
-          <Drawer
-              open={isExpanded}
-              onClose={() => setIsExpanded(false)}
-              slotProps={{paper: {className: "sidebar-drawer-paper"}}}
-          >
-            <VStack id="drawer-navigation" gap="4" className="sidebar-panel">
-              <div className="sidebar-header">
-                <div>
-                  <BodyShort size="small" className="sidebar-header__eyebrow">Bidrag-dokumentasjon</BodyShort>
-                  <Heading size="small" level="1">Kilder</Heading>
-                </div>
-                <Button
-                    size="small"
-                    variant="tertiary-neutral"
-                    onClick={() => setIsExpanded(false)}
-                    icon={<ChevronLeftIcon aria-hidden/>}
-                >
-                  Skjul
-                </Button>
-              </div>
-              <Box className="sidebar-section">
-                <Heading size="xsmall" level="2">Last lokal fil</Heading>
-                <BodyShort size="small" className="sidebar-copy">
-                  Åpne en lokal markdown- eller mermaid-fil uten å bruke GitHub-kvoten.
-                </BodyShort>
-                <label htmlFor="file_input" className="file-picker-card">
-                  <span className="file-picker-card__title">Velg fil fra maskinen</span>
-                  <span className="file-picker-card__meta">
-                    {selectedFileName ?? "Støtter .md, .markdown og .mermaid"}
-                  </span>
-                </label>
-                <input
-                    id="file_input"
-                    type="file"
-                    name="Last fra fil"
-                    accept=".mermaid,.md,.markdown"
-                    onClick={(ev) => ((ev.target as HTMLInputElement).value = "")}
-                    onChange={(event) => {
-                      void openFile(event);
-                    }}
-                    className="file-picker-input"
-                />
-              </Box>
-              <Box className="sidebar-section sidebar-section--fill">
-                <Heading size="xsmall" level="2">GitHub</Heading>
-                <BodyShort size="small" className="sidebar-copy">
-                  Bla i dokumentasjonen direkte fra repoet og åpne filer ved behov.
-                </BodyShort>
-                <GithubTreeView/>
-              </Box>
-            </VStack>
-          </Drawer>
+          )}
           <MermaidChart/>
         </div>
       </AppContext.Provider>
@@ -303,7 +299,7 @@ function GithubTreeView() {
   .filter((folder) => folder.name !== ".github" && folder.name !== "frontend");
 
   return (
-      <VStack gap="4" className="github-section">
+      <VStack gap="space-4" className="github-section">
         <div className="github-toolbar">
           <Switch size="small" checked={githubEnabled} onChange={(e) => setGithubEnabled(e.target.checked)}>
             Hent fra GitHub
@@ -448,9 +444,9 @@ function MermaidChart() {
           </Modal.Body>
         </Modal>
         {showContent?.type === "mermaid" ? (
-            <pre ref={divRef} className="mermaid h-full grow w-full max-w-full [&_svg]:!max-w-full"/>
+            <pre ref={divRef} className="mermaid h-full grow w-full max-w-full [&_svg]:max-w-full!"/>
         ) : showContent ? (
-            <div className="pt-8 m-auto overflow-y-auto h-full w-[1100px] pl-8 pr-8 pb-8">
+            <div className="pt-8 m-auto overflow-y-auto h-full w-275 pl-8 pr-8 pb-8">
               <Markdown components={MarkdownComponents} remarkPlugins={[remarkGfm]} rehypePlugins={[remarkRaw]}>
                 {showContent.content}
               </Markdown>
