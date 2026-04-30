@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-      - uses: actions/cache@v3
+        uses: actions/checkout@v5
+      - uses: actions/cache@v4
         id: yarn-cache
         with:
           path: .yarn/cache
@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: current
           check-latest: true
@@ -52,4 +52,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
