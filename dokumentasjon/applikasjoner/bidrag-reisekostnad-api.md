@@ -7,6 +7,7 @@ Applikasjon for å fordele reisekostnader ved samvær med barn.
 | Felt             | Verdi                                                                                                          |
 |------------------|----------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-reisekostnad-api                                                                                        |
+| Lenke            | https://bidrag-reisekostnad-api.intern.nav.no/swagger-ui/index.html |
 | Applikasjonstype | Backend-tjeneste                                                                                               |
 | Driftsområde     | GCP                                                                                                            |
 | GitHub           | [navikt/bidrag-reisekostnad-api](https://github.com/navikt/bidrag-reisekostnad-api)                            |

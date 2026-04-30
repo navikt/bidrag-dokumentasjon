@@ -7,6 +7,7 @@ Applikasjon for å håndtere informasjon om bidragssamhandlere.
 | Felt             | Verdi                                                                                                         |
 |------------------|---------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-samhandler                                                                                             |
+| Lenke            | https://bidrag-samhandler.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                              |
 | Driftsområde     | GCP                                                                                                           |
 | GitHub           | [navikt/bidrag-samhandler](https://github.com/navikt/bidrag-samhandler/)                                      |

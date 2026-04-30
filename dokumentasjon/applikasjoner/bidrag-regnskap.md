@@ -7,6 +7,7 @@ Applikasjon for å kreve inn bidrag, forskudd, gebyrer mm. via skatteetaten.
 | Felt             | Verdi                                                                                                       |
 |------------------|-------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-regnskap                                                                                             |
+| Lenke            | https://bidrag-regnskap.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                            |
 | Driftsområde     | GCP                                                                                                         |
 | GitHub           | [navikt/bidrag-skatteetaten](https://github.com/navikt/bidrag-skatteetaten)                                 |

@@ -8,6 +8,7 @@ Bidrag UI er bare et skall grensesnitt som håndterer brukerinnlogging, sesjonsh
 | Felt             | Verdi                                                   |
 |------------------|---------------------------------------------------------|
 | Navn             | Bidrag-ui                                               |
+| Lenke            |  |
 | Applikasjonstype | Frontend-applikasjon                                    |
 | Driftsområde     | FSS                                                     |
 | GitHub           | [navikt/bidrag-ui](https://github.com/navikt/bidrag-ui) |

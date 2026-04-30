@@ -7,6 +7,7 @@ Applikasjon som hjelper med å beregne barnebidrag.
 | Felt             | Verdi                                                                                |
 |------------------|--------------------------------------------------------------------------------------|
 | Navn             | Bidrag-bidragskalkulator-V2                                                          |
+| Lenke            | https://bidrag-bidragskalkulator-v2.intern.nav.no/ |
 | Applikasjonstype | Frontend-tjeneste                                                                    |
 | Driftsområde     | GCP                                                                                  |
 | GitHub           | [bidrag-bidragskalkulator-v2](https://github.com/navikt/bidrag-bidragskalkulator-ui) |

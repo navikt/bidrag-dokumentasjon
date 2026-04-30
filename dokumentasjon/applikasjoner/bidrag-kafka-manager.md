@@ -7,6 +7,7 @@ Applikasjon for å administrere Kafka-topics for Bidragsområdet.
 | Felt             | Verdi                                                                         |
 |------------------|-------------------------------------------------------------------------------|
 | Navn             | Bidrag-kafka-manager                                                          |
+| Lenke            | https://bidrag-kafka-manager.intern.nav.no/ |
 | Applikasjonstype | Administrasjonspanel                                                          |
 | Driftsområde     | GCP                                                                           |
 | GitHub           | [navikt/bidrag-kafka-manager](https://github.com/navikt/bidrag-kafka-manager) |

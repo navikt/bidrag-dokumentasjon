@@ -7,6 +7,7 @@ Applikasjon for innhenting og lagring av grunnlag i bidragssaker.
 | Felt             | Verdi                                                                                                         |
 |------------------|---------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-grunnlag                                                                                               |
+| Lenke            | https://bidrag-grunnlag.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                              |
 | Driftsområde     | GCP                                                                                                           |
 | GitHub           | [navikt/bidrag-grunnlag](https://github.com/navikt/bidrag-grunnlag)                                           |

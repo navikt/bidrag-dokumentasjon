@@ -7,6 +7,7 @@ Applikasjon for behandling av beløpshistorikk på bidragsområdet.
 | Felt             | Verdi                                                                                                              |
 |------------------|--------------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-belopshistorikk                                                                                             |
+| Lenke            | https://bidrag-belopshistorikk.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                                   |
 | Driftsområde     | GCP                                                                                                                |
 | GitHub           | [navikt/bidrag-belopshistorikk](https://github.com/navikt/bidrag-belopshistorikk)                                  |

@@ -7,6 +7,7 @@ Applikasjon for administrative formål på Bidragsområdet.
 | Felt             | Verdi                                                                                                    |
 |------------------|----------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-admin                                                                                             |
+| Lenke            | https://bidrag-admin.intern.nav.no/ |
 | Applikasjonstype | Administrasjonspanel                                                                                     |
 | Driftsområde     | GCP                                                                                                      |
 | GitHub           | [navikt/bidrag-admin](https://github.com/navikt/bidrag-admin)                                            |

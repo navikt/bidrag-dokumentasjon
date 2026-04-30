@@ -8,6 +8,7 @@ App som har ansvar for å serve statiske ressurser for frontender.
 | Felt             | Verdi                                                                             |
 |------------------|-----------------------------------------------------------------------------------|
 | Navn             | Bidrag-ui-static-files                                                            |
+| Lenke            |  |
 | Applikasjonstype | Frontend-ressurs                                                                  |
 | Driftsområde     | GCP                                                                               |
 | GitHub           | [navikt/bidrag-ui-static-files](https://github.com/navikt/bidrag-ui-static-files) |

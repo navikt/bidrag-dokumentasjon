@@ -7,6 +7,7 @@ Kort beskrivelse mangler.
 | Felt             | Verdi                                                                                     |
 |------------------|-------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-dokument-arkivering                                                                |
+| Lenke            |  |
 | Applikasjonstype | Backend-tjeneste, dokumentløsning                                                         |
 | Driftsområde     | GCP                                                                                       |
 | GitHub           | [navikt/bidrag-dokument-arkivering](https://github.com/navikt/bidrag-dokument-arkivering) |

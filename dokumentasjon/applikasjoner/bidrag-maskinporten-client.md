@@ -7,6 +7,7 @@ Applikasjon for å hente ut maskinporten-token for autentisering mot andre appli
 | Felt             | Verdi                                                                                     |
 |------------------|-------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-maskinporten-client                                                                |
+| Lenke            | https://bidrag-maskinporten-client.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                          |
 | Driftsområde     | GCP                                                                                       |
 | GitHub           | [navikt/bidrag-maskinporten-client](https://github.com/navikt/bidrag-maskinporten-client) |

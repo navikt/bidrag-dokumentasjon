@@ -7,6 +7,7 @@ Applikasjon for behandling av statistikk for bidragsområdet.
 | Felt             | Verdi                                                                              |
 |------------------|------------------------------------------------------------------------------------|
 | Navn             | Bidrag-statistikk                                                                  |
+| Lenke            | https://bidrag-statistikk.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                   |
 | Driftsområde     | GCP                                                                                |
 | GitHub           | [navikt/bidrag-statistikk](https://github.com/navikt/bidrag-statistikk)            |

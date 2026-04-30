@@ -7,6 +7,7 @@ Applikasjon for automatiske jobber og kjøring på bidragsområdet.
 | Felt             | Verdi                                                                                                              |
 |------------------|--------------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-automatisk-Jobb                                                                                             |
+| Lenke            | https://bidrag-automatisk-jobb.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste, batch-tjeneste                                                                                   |
 | Driftsområde     | GCP                                                                                                                |
 | GitHub           | [navikt/bidrag-automatisk-jobb](https://github.com/navikt/bidrag-automatisk-jobb)                                  |

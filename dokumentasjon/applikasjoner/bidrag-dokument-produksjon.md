@@ -7,6 +7,7 @@ Applikasjon for å produsere dokumenter på Bidragsområdet.
 | Felt             | Verdi                                                                                     |
 |------------------|-------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-Dokument-Produksjon                                                                |
+| Lenke            | https://bidrag-dokument-produksjon.intern.nav.no/ |
 | Applikasjonstype | Dokument-tjeneste, dokumentløsning                                                        |
 | Driftsområde     | GCP                                                                                       |
 | GitHub           | [navikt/bidrag-dokument-produksjon](https://github.com/navikt/bidrag-dokument-produksjon) |

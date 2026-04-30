@@ -7,6 +7,7 @@ Applikasjon for å hente ut hva skatt har krevd inn, og eventuell gjeld.
 | Felt             | Verdi                                                                       |
 |------------------|-----------------------------------------------------------------------------|
 | Navn             | Bidrag-reskontro                                                            |
+| Lenke            | https://bidrag-reskontro.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                            |
 | Driftsområde     | GCP                                                                         |
 | GitHub           | [navikt/bidrag-skatteetaten](https://github.com/navikt/bidrag-skatteetaten) |

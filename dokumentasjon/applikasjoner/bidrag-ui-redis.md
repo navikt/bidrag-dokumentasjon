@@ -7,6 +7,7 @@ Sessionstorage for Bidrag-Ui. Redis er en in-memory datalagring som brukes for √
 | Felt             | Verdi                                                   |
 |------------------|---------------------------------------------------------|
 | Navn             | Bidrag-ui-redis                                         |
+| Lenke            |  |
 | Applikasjonstype | Frontend-ressurs                                        |
 | Driftsomr√•de     | FSS                                                     |
 | GitHub           | [navikt/bidrag-ui](https://github.com/navikt/bidrag-ui) |

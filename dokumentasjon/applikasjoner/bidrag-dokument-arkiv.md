@@ -7,6 +7,7 @@ Mikrotjeneste som fungerer som en facade mot fagarkivet (JOARK) for Bidrag/Farsk
 | Felt             | Verdi                                                                               |
 |------------------|-------------------------------------------------------------------------------------|
 | Navn             | Bidrag-dokument-arkiv                                                               |
+| Lenke            | |
 | Applikasjonstype | Backend-tjeneste, dokumentløsning                                                   |
 | Driftsområde     | FSS                                                                                 |
 | GitHub           | [navikt/bidrag-dokument-arkiv](https://github.com/navikt/bidrag-dokument-arkiv)     |

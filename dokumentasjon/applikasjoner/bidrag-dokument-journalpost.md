@@ -6,6 +6,7 @@ Applikasjon for å hente metadata fra midlertidig brevlager (bidrag bisys)
 | Felt             | Verdi                                                                                                                                                                                          |
 |------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-Dokument-Journalpost                                                                                                                                                                    |
+| Lenke            |  |
 | Applikasjonstype | Backend-tjeneste, dokumentløsning                                                                                                                                                              |
 | Driftsområde     | FSS                                                                                                                                                                                            |
 | GitHub           | [navikt/bidrag-dokument-journalpost](https://github.com/navikt/bidrag-dokument-journalpost)                                                                                                    |

@@ -7,6 +7,7 @@ Applikasjon for behandling av vedtak på Bidragsområdet.
 | Felt             | Verdi                                                                                                                                                                                            |
 |------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-vedtak                                                                                                                                                                                    |
+| Lenke            | https://bidrag-vedtak.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                                                                                                                 |
 | Driftsområde     | GCP                                                                                                                                                                                              |
 | GitHub           | [navikt/bidrag-vedtak](https://github.com/navikt/bidrag-vedtak)                                                                                                                                  |

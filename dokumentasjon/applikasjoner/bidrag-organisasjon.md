@@ -7,6 +7,7 @@ Applikasjon for å hente ut navn på saksbehandler via LDAP
 | Felt             | Verdi                                                                       |
 |------------------|-----------------------------------------------------------------------------|
 | Navn             | Bidrag-organisasjon                                                         |
+| Lenke            | https://bidrag-organisasjon.intern.nav.no/bidrag-organisasjon/              |
 | Applikasjonstype | Backend-tjeneste                                                            |
 | Driftsområde     | FSS                                                                         |
 | GitHub           | [navikt/bidrag-organisasjon](https://github.com/navikt/bidrag-organisasjon) |

@@ -4,14 +4,15 @@
 UI for å fordele reisekostnader ved samvær med barn.
 
 ## Nøkkelinformasjon
-| Felt             | Verdi                                                                             |
-|------------------|-----------------------------------------------------------------------------------|
-| Navn             | Bidrag-reisekostnad-ui                                                            |
-| Applikasjonstype | Frontend-tjeneste                                                                 |
-| Driftsområde     | GCP                                                                               |
+| Felt             | Verdi                                                                         |
+|------------------|-------------------------------------------------------------------------------|
+| Navn             | Bidrag-reisekostnad-ui                                                        |
+| Lenke            | https://bidrag-reisekostnad.nav.no/ |
+| Applikasjonstype | Frontend-tjeneste                                                             |
+| Driftsområde     | GCP                                                                           |
 | GitHub           | [navikt/bidrag-reisekostnad-ui](https://github.com/navikt/bidrag-reisekostnad-ui) |
-| Har database     | Nei                                                                               |
-| Kafka-topic      | Nei                                                                               |
+| Har database     | Nei                                                                           |
+| Kafka-topic      | Nei                                                                           |
 
 ## Viktige integrasjoner
 -

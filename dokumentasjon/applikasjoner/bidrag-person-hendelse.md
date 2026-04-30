@@ -8,6 +8,7 @@ Distribuerer disse videre til Bisys via MQ og andre bidragsapplikasjoner via Kaf
 | Felt             | Verdi                                                                                                          |
 |------------------|----------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-person-hendelse                                                                                         |
+| Lenke            | |
 | Applikasjonstype | Backend-tjeneste, varslingstjeneste                                                                            |
 | Driftsområde     | GCP                                                                                                            |
 | GitHub           | [navikt/bidrag-person-hendelse](https://github.com/navikt/bidrag-person-hendelse)                              |

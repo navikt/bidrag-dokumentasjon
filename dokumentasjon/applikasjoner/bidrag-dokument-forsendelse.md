@@ -7,6 +7,7 @@ Applikasjon som brukes for å opprette og oppdatere forsendelser.
 | Felt             | Verdi                                                                                                                                                                                          |
 |------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-dokument-forsendelse                                                                                                                                                                    |
+| Lenke            | https://bidrag-dokument-forsendelse.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste, dokumentløsning                                                                                                                                                              |
 | Driftsområde     | GCP                                                                                                                                                                                            |
 | GitHub           | [navikt/bidrag-dokument-forsendelse](https://github.com/navikt/bidrag-dokument-forsendelse)                                                                                                    |

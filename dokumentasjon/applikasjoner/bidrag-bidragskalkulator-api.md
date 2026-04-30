@@ -8,6 +8,7 @@ Applikasjonen fungerer som backend for bidrag-bidragskalkulator-ui.
 | Felt             | Verdi                                                                                         |
 |------------------|-----------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-bidragskalkulator-api                                                                  |
+| Lenke            | https://bidrag-bidragskalkulator-api.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                              |
 | Driftsområde     | GCP                                                                                           |
 | GitHub           | [navikt/bidrag-bidragskalkulator-api](https://github.com/navikt/bidrag-bidragskalkulator-api) |

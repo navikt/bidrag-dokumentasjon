@@ -7,6 +7,7 @@ Applikasjoner for sjabloner for Bidragsområdet.
 | Felt             | Verdi                                                             |
 |------------------|-------------------------------------------------------------------|
 | Navn             | Bidrag-sjablon                                                    |
+| Lenke            |  |
 | Applikasjonstype | Backend-tjeneste                                                  |
 | Driftsområde     | FSS                                                               |
 | GitHub           | [navikt/bidrag-sjablon](https://github.com/navikt/bidrag-sjablon) |

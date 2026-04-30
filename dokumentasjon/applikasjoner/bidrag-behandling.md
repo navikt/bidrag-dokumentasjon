@@ -7,6 +7,7 @@ Applikasjon for nye saksbehandlingsløsningen på bidragsområdet.
 | Felt             | Verdi                                                                                                    |
 |------------------|----------------------------------------------------------------------------------------------------------|
 | Navn             | Bidrag-Behandling                                                                                        |
+| Lenke            | https://bidrag-behandling.intern.nav.no/ |
 | Applikasjonstype | Backend-tjeneste                                                                                         |
 | Driftsområde     | GCP                                                                                                      |
 | GitHub           | [navikt/bidrag-behandling](https://github.com/navikt/bidrag-behandling)                                  |
