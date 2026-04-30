@@ -126,6 +126,10 @@ function sortGithubContent(content: GithubContent[]): GithubContent[] {
   });
 }
 
+function getFolderItemIds(content: GithubContent[]): string[] {
+  return content.filter((item) => item.type === "dir").map((item) => `folder_${item.path}`);
+}
+
 function TreeLabel({name, badge}: { name: string; badge: string }) {
   return (
       <span className="tree-label">
@@ -167,7 +171,7 @@ export const useAppContext = () => {
 
 export default function DokumentasjonPage() {
   const [showContent, setShowContent] = useState<Content | undefined>();
-  const [expandedFolders, setExpandedFolders] = useState<string[]>(["folder_root", "folder_dokumentasjon"]);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
@@ -298,6 +302,16 @@ function GithubTreeView() {
   .filter((file) => file.type === "dir")
   .filter((folder) => folder.name !== ".github" && folder.name !== "frontend");
 
+  useEffect(() => {
+    if (!githubEnabled || folders.length === 0) return;
+
+    const folderIds = getFolderItemIds(folders);
+    setExpandedFolders((prev) => {
+      const missing = folderIds.filter((folderId) => !prev.includes(folderId));
+      return missing.length === 0 ? prev : [...prev, ...missing];
+    });
+  }, [folders, githubEnabled, setExpandedFolders]);
+
   return (
       <VStack gap="space-4" className="github-section">
         <div className="github-toolbar">
@@ -322,12 +336,10 @@ function GithubTreeView() {
                     void updateShowedContent(event, itemId);
                   }}
               >
-                <TreeItem itemId="folder_root" label={<TreeLabel name={GITHUB_REPO} badge="repo"/>}>
-                  {files.map((file) => (
-                      <TreeItem key={file.path} itemId={file.download_url} label={<TreeLabel name={file.name} badge="fil"/>}/>
-                  ))}
-                  {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
-                </TreeItem>
+                {files.map((file) => (
+                    <TreeItem key={file.path} itemId={file.download_url} label={<TreeLabel name={file.name} badge="fil"/>}/>
+                ))}
+                {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
               </SimpleTreeView>
             </div>
         )}
@@ -336,7 +348,7 @@ function GithubTreeView() {
 }
 
 function GithubTree({folder}: { folder: GithubContent }) {
-  const {expandedFolders} = useAppContext();
+  const {expandedFolders, setExpandedFolders} = useAppContext();
   const folderItemId = `folder_${folder.path}`;
   const isExpanded = expandedFolders.includes(folderItemId);
   const {data: content = [], error, isLoading} = useQuery<GithubContent[]>({
@@ -356,6 +368,16 @@ function GithubTree({folder}: { folder: GithubContent }) {
   const files = sortedContent.filter((file) => file.type === "file");
   const folders = sortedContent.filter((file) => file.type === "dir");
   const treeError = error ? getGithubErrorDetails(error) : null;
+
+  useEffect(() => {
+    if (!isExpanded || folders.length === 0) return;
+
+    const childFolderIds = getFolderItemIds(folders);
+    setExpandedFolders((prev) => {
+      const missing = childFolderIds.filter((folderId) => !prev.includes(folderId));
+      return missing.length === 0 ? prev : [...prev, ...missing];
+    });
+  }, [folders, isExpanded, setExpandedFolders]);
 
   return (
       <TreeItem itemId={folderItemId} label={<TreeLabel name={folder.name} badge="mappe"/>}>
