@@ -73,6 +73,7 @@ interface AppContextType {
   expandedFolders: string[];
   setExpandedFolders: Dispatch<SetStateAction<string[]>>;
   setShowContent: (content: Content) => void;
+  resetContent: () => void;
 }
 
 function formatRateLimitReset(resetAt?: string): string | null {
@@ -194,15 +195,26 @@ export default function DokumentasjonPage() {
     setShowContent(fileBuffer);
   }
 
+  function resetContent() {
+    setShowContent(undefined);
+    setSelectedFileName(null);
+  }
+
   return (
-      <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders}}>
+      <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders, resetContent}}>
         <div className="app-shell h-full w-full flex flex-row [&_svg]:max-w-full!">
           {isExpanded ? (
               <aside className="sidebar-container">
                 <VStack id="drawer-navigation" gap="space-4" className="sidebar-panel">
                   <div className="sidebar-header">
                     <div>
-                      <BodyShort size="small" className="sidebar-header__eyebrow">Bidrag-dokumentasjon</BodyShort>
+                      <button
+                          type="button"
+                          className="sidebar-header__home-link"
+                          onClick={resetContent}
+                      >
+                        Bidrag-dokumentasjon
+                      </button>
                       <Heading size="small" level="1">Kilder</Heading>
                     </div>
                     <Button
@@ -397,6 +409,63 @@ function GithubTree({folder}: { folder: GithubContent }) {
   );
 }
 
+function LandingPage() {
+  return (
+      <div className="landing-page">
+        <div className="landing-page__inner">
+          <div className="landing-page__icon" aria-hidden="true">📄</div>
+          <Heading size="large" level="2" className="landing-page__title">
+            Bidrag-dokumentasjon
+          </Heading>
+          <BodyShort size="large" className="landing-page__lead">
+            Et verktøy for å utforske og lese teknisk dokumentasjon for NAVs bidragsløsning.
+          </BodyShort>
+
+          <div className="landing-page__cards">
+            <div className="landing-page__card">
+              <span className="landing-page__card-icon" aria-hidden="true">🗂️</span>
+              <Heading size="xsmall" level="3">Bla i dokumentasjon</Heading>
+              <BodyShort size="small" className="landing-page__card-text">
+                Bruk sidepanelet til venstre for å hente dokumentasjon direkte fra GitHub-repoet.
+              </BodyShort>
+            </div>
+            <div className="landing-page__card">
+              <span className="landing-page__card-icon" aria-hidden="true">📂</span>
+              <Heading size="xsmall" level="3">Last opp lokal fil</Heading>
+              <BodyShort size="small" className="landing-page__card-text">
+                Du kan også åpne lokale <code>.mermaid</code>-, <code>.md</code>- eller <code>.markdown</code>-filer direkte fra maskinen din.
+              </BodyShort>
+            </div>
+            <div className="landing-page__card">
+              <span className="landing-page__card-icon" aria-hidden="true">🔷</span>
+              <Heading size="xsmall" level="3">Mermaid-diagrammer</Heading>
+              <BodyShort size="small" className="landing-page__card-text">
+                Systemskisser og flytdiagrammer vises som interaktive Mermaid-diagrammer med pan og zoom. Klikk på elementer for å se detaljer.
+              </BodyShort>
+            </div>
+          </div>
+
+          <div className="landing-page__footer">
+            <BodyShort size="small" className="landing-page__footer-text">
+              Kildekoden og all dokumentasjon ligger åpent tilgjengelig på GitHub.
+            </BodyShort>
+            <a
+                href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="landing-page__github-link"
+            >
+              <svg className="landing-page__github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.09.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.742 0 .267.18.577.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+              </svg>
+              navikt / bidrag-dokumentasjon
+            </a>
+          </div>
+        </div>
+      </div>
+  );
+}
+
 function MermaidChart() {
   const {showContent} = useAppContext();
   const [showDetailsMarkdown, setShowDetailsMarkdown] = useState<string | null>(null);
@@ -474,12 +543,7 @@ function MermaidChart() {
               </Markdown>
             </div>
         ) : (
-            <div className="content-placeholder">
-              <Heading size="small" level="2">Velg innhold</Heading>
-              <BodyShort>
-                Åpne en lokal fil eller hent dokumentasjon fra GitHub-panelet for å vise markdown eller mermaid.
-              </BodyShort>
-            </div>
+            <LandingPage/>
         )}
       </>
   );
