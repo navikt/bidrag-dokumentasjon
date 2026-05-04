@@ -6,7 +6,6 @@ graph LR
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
-    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
     classDef legacyApp fill:#C0392B,color:#fff,stroke:#922b21
     classDef utility fill:#27AE60,color:#fff,stroke:#1e8449
     classDef external fill:#BDC3C7,color:#333,stroke:#95A5A6,stroke-dasharray: 5 5
@@ -72,15 +71,14 @@ graph LR
 
     %% Color assignments
     class Bisys legacyApp
-    class BidragRegnskap,BidragAktoerregister,BidragSamhandler withDb
     class BidragPerson legacyFSS
     class BidragReskontro utility
     class BisysReskRest,AvstemOppdrag,TolkingClient,Tolking2Predator,SFTPFilsluse,KKR,SokosKontoregister,PDL external
 
     subgraph Legend["📋 Systemforklaring"]
-        LegendDb["🟡 = Applikasjon med database 🛢️"]
+        LegendDb["🛢 = Applikasjon med database"]
         LegendLegacy["🔴 = Legacy-applikasjon"]
-        LegendFSS["⬛ = FSS-tjeneste"]
+        LegendFSS["⬛ = FSS-applikasjon"]
         LegendUtility["🟢 = Støttetjeneste"]
         LegendExternal["⬜ = Eksternt system (utenfor Bidrag)"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]

@@ -5,7 +5,6 @@ config:
 graph LR
 
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
-    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
 
     subgraph Grunndata["🗄️ Grunndata og Masterdata"]
         direction LR
@@ -22,7 +21,6 @@ graph LR
     end
 
     class BidragSjablon,BidragPerson,BidragBbm,BidragOrganisasjon legacyFSS
-    class BidragGrunnlag,BidragSak withDb
 
     click BidragSjablon visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragPerson visApplikasjon "Åpne applikasjonsbeskrivelse"
@@ -32,7 +30,7 @@ graph LR
     click BidragGrunnlag visApplikasjon "Åpne applikasjonsbeskrivelse"
 
     subgraph Legend["📋 Systemforklaring"]
-        LegendDb["🟡 = Applikasjon med database 🛢️"]
+        LegendDb["🛢 = Applikasjon med database️"]
         LegendFSS["⬛ = FSS-applikasjon"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]
     end

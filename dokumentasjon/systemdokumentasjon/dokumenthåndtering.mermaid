@@ -6,7 +6,6 @@ graph LR
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
-    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
     classDef legacyApp fill:#C0392B,color:#fff,stroke:#922b21
     classDef utility fill:#27AE60,color:#fff,stroke:#1e8449
     classDef external fill:#BDC3C7,color:#333,stroke:#95A5A6,stroke-dasharray: 5 5
@@ -51,7 +50,6 @@ graph LR
 
 
     %% Color assignments
-    class BidragDokumentForsendelse withDb
     class BidragDokumentArkiv,BidragDokumentJournalpost legacyFSS
     class BidragDokumentArkivering,BidragDokumentBestilling,BidragDokumentProduksjon,BidragDokumentmal,BidragPdfgen utility
 
@@ -66,10 +64,10 @@ graph LR
     click BidragPdfgen visApplikasjon "Åpne applikasjonsbeskrivelse"
 
     subgraph Legend["📋 Systemforklaring"]
-        LegendDb["🟡 = Applikasjon med database 🛢️"]
-        LegendFSS["⬛ = FSS/Legacy-tjeneste"]
-        LegendUtility["🟢 = Støttetjeneste"]
+        LegendDb["🛢 = Applikasjon med database"]
         LegendKafka["☕ = Applikasjon med Kafka topic"]
+        LegendFSS["⬛ = FSS-applikasjon"]
+        LegendUtility["🟢 = Støttetjeneste"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]
     end
 

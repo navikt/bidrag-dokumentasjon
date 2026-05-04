@@ -6,7 +6,6 @@ graph TB
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
-    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
     classDef docSystem fill:#8E44AD,color:#fff,stroke:#6c3483
 
     subgraph Reisekostnader["🚗 Reisekostnader"]
@@ -26,7 +25,6 @@ graph TB
 
     %% Color assignments
     class BidragReisekostnadUi frontend
-    class BidragReisekostnadApi withDb
     class BidragPerson legacyFSS
     class DokumentHandtering docSystem
 
@@ -37,8 +35,8 @@ graph TB
 
     subgraph Legend["📋 Systemforklaring"]
         LegendFrontend["🔵 = Frontend/UI-applikasjon"]
-        LegendDb["🟡 = Applikasjon med database 🛢️"]
-        LegendFSS["⬛ = FSS/Legacy-tjeneste"]
+        LegendDb["🛢= Applikasjon med database"]
+        LegendFSS["⬛ = FSS-applikasjon"]
         LegendDoc["🟣 = Eget diagram"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]
     end

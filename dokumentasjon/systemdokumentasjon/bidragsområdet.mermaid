@@ -6,7 +6,6 @@ graph LR
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
-    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
     classDef legacyApp fill:#C0392B,color:#fff,stroke:#922b21
     classDef utility fill:#27AE60,color:#fff,stroke:#1e8449
     classDef docSystem fill:#8E44AD,color:#fff,stroke:#6c3483
@@ -15,25 +14,22 @@ graph LR
     subgraph Bidragsområdet["Bidragsområdet"]
         direction LR
 
-        Grunndata["<b>🗄️ Grunndata</b><br/>Se eget diagram"]
-
-        BidragUi["<b>Bidrag-UI</b><br/>Hovedgrensesnitt"]
-
-        DokumentHandtering["<b>📄 Dokumenthåndtering</b><br/>Se eget diagram"]
-
-        Bisys["<b>Bisys</b><br/>Fatter vedtak"]
-
-        BidragArbeidsflyt["<b>Bidrag-Arbeidsflyt</b> 🛢️<br/>Hendelse-tjeneste"]
-        BidragBehandling["<b>Bidrag-Behandling</b> ☕ 🛢️<br/>Saksbehandlingsløsning"]
-        BidragBelopshistorikk["<b>Bidrag-Belopshistorikk</b> 🛢️<br/>Beløpshistorikk"]
-        BidragRegnskap["<b>Bidrag-Regnskap</b> 🛢️<br/>Transformerer vedtak til krav"]
-        BidragReskontro["<b>Bidrag-Reskontro</b><br/>Reskontro-integrasjon"]
-        BidragAktoerregister["<b>Bidrag-Aktørregister</b> 🛢️<br/>Aktørinformasjon"]
-        BidragSamhandler["<b>Bidrag-Samhandler</b> ☕ 🛢️<br/>Bidragssamhandlere"]
-        BidragPersonHendelse["<b>Bidrag-Person-Hendelse</b> ☕ 🛢️<br/>PDL-hendelser"]
-        BidragAutomatiskJobb["<b>Bidrag-Automatisk-Jobb</b> 🛢️<br/>Automatiske batcher"]
-        BidragGrunnlag["<b>Bidrag-Grunnlag</b> 🛢️<br/>Innhenting av grunnlag"]
-        BidragVedtak["<b>Bidrag-Vedtak</b> ☕ 🛢️<br/>Vedtaksbehandling"]
+        subgraph Applikasjonsflyt
+            direction LR
+            Grunndata["<b>🗄️ Grunndata</b><br/>Se eget diagram"]
+            BidragUi["<b>Bidrag-UI</b><br/>Hovedgrensesnitt"]
+            DokumentHandtering["<b>📄 Dokumenthåndtering</b><br/>Se eget diagram"]
+            Bisys["<b>Bisys</b><br/>Fatter vedtak"]
+            BidragArbeidsflyt["<b>Bidrag-Arbeidsflyt</b> 🛢️<br/>Hendelse-tjeneste"]
+            BidragBehandling["<b>Bidrag-Behandling</b> ☕ 🛢️<br/>Saksbehandlingsløsning"]
+            BidragBelopshistorikk["<b>Bidrag-Belopshistorikk</b> 🛢️<br/>Beløpshistorikk"]
+            BidragRegnskap["<b>Bidrag-Regnskap</b> 🛢️<br/>Transformerer vedtak til krav"]
+            BidragReskontro["<b>Bidrag-Reskontro</b><br/>Reskontro-integrasjon"]
+            BidragAktoerregister["<b>Bidrag-Aktørregister</b> 🛢️<br/>Aktørinformasjon"]
+            BidragSamhandler["<b>Bidrag-Samhandler</b> ☕ 🛢️<br/>Bidragssamhandlere"]
+            BidragAutomatiskJobb["<b>Bidrag-Automatisk-Jobb</b> 🛢️<br/>Automatiske batcher"]
+            BidragVedtak["<b>Bidrag-Vedtak</b> ☕ 🛢️<br/>Vedtaksbehandling"]
+        end
 
         subgraph Utility["⚙️ Utility og støtteapplikasjoner"]
             direction TB
@@ -43,13 +39,14 @@ graph LR
             BidragKodeverk["<b>Bidrag-Kodeverk</b><br/>Nav kode verk"]
             BidragStatistikk["<b>Bidrag-Statistikk</b> ☕<br/>Statistikkbehandling"]
             BidragTilgangskontroll["<b>Bidrag-Tilgangskontroll</b><br/>Tilgangskontroll"]
+            BidragPersonHendelse["<b>Bidrag-Person-Hendelse</b> ☕ 🛢️<br/>PDL-hendelser"]
         end
     end
 
 %% Bisys
     Bisys -->|Etterspør reskontro & endrer RM| BidragReskontro
     Bisys -->|Oppretter/endrer samhandlere| BidragSamhandler
-    Bisys -->|Sender vedtak & henter feilede transaksjoner| BidragRegnskap
+    Bisys -->|Henter feilede transaksjoner| BidragRegnskap
     Bisys -->|Henter grunndata| Grunndata
     Bisys -->|Henter beløpshistorikk| BidragBelopshistorikk
     Bisys -->|Henter behandlingsinformasjon| BidragBehandling
@@ -63,10 +60,6 @@ graph LR
 %% Bidrag-Regnskap
     BidragRegnskap -->|Henter grunndata| Grunndata
     BidragRegnskap -->|Henter reskontroinfromasjon| BidragReskontro
-%% Bidrag-Person-Hendelse
-    BidragPersonHendelse -->|Personhendelser| BidragAktoerregister
-    BidragPersonHendelse -->|Personhendelser| BidragRegnskap
-    BidragPersonHendelse -->|Personhendelser| BidragAutomatiskJobb
 %% Bidrag-Samhandler
     BidragSamhandler -->|Oppretter/endrer samhandlere| BidragAktoerregister
 %% Bidrag-Arbeidsflyt
@@ -95,6 +88,7 @@ graph LR
 %% Bidrag-Grunnlag
 %% Bidrag-Vedtak
     BidragVedtak -->|Henter grunndata| Grunndata
+    BidragVedtak -->|Vedtakhendelser | BidragRegnskap
 %% Bidrag-Sak
 %% Bidrag-Organisasjon
 %% Bidrag-Tilgangskontroll
@@ -105,7 +99,6 @@ graph LR
 
     %% Color assignments
     class BidragUi frontend
-    class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragVedtak,BidragAdmin withDb
     class Bisys legacyApp
     class BidragKodeverk,BidragTilgangskontroll,BidragStatistikk,BidragReskontro,BidragKafkaManager,BidragDokumentasjon utility
     class DokumentHandtering,Grunndata docSystem
@@ -140,12 +133,12 @@ graph LR
 
     subgraph Legend["📋 Systemforklaring"]
         LegendFrontend["🔵 = Frontend/UI-applikasjon"]
-        LegendDb["🟡 = Applikasjon med database 🛢️"]
+        LegendDb["🛢 = Applikasjon med database"]
+        LegendKafka["☕ = Applikasjon med Kafka topic"]
         LegendLegacy["🔴 = Legacy-applikasjon"]
         LegendFSS["⬛ = FSS-applikasjon"]
         LegendUtility["🟢 = Støttetjeneste/Utility"]
         LegendDoc["🟣 = Eget diagram"]
-        LegendKafka["☕ = Applikasjon med Kafka topic"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]
     end
 
