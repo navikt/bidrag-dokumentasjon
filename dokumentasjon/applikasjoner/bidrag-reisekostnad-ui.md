@@ -13,10 +13,3 @@ UI for å fordele reisekostnader ved samvær med barn.
 | GitHub           | [navikt/bidrag-reisekostnad-ui](https://github.com/navikt/bidrag-reisekostnad-ui) |
 | Har database     | Nei                                                                           |
 | Kafka-topic      | Nei                                                                           |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

@@ -13,10 +13,3 @@ Applikasjon for å hente ut felles Nav kodeverk.
 | GitHub           | [navikt/bidrag-kodeverk](https://github.com/navikt/bidrag-kodeverk) |
 | Har database     | Nei                                                                 |
 | Kafka-topic      | Nei                                                                 |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

@@ -13,10 +13,3 @@ Applikasjon for nye saksbehandlingsløsningen på bidragsområdet.
 | GitHub           | [navikt/bidrag-behandling](https://github.com/navikt/bidrag-behandling)                                  |
 | Har database     | [Ja](https://console.cloud.google.com/sql/instances/bidrag-behandling/overview?project=bidrag-prod-8f72) |
 | Kafka-topic      | [Ja](https://github.com/navikt/bidrag-kafka/blob/main/topics/behandling-prod.yaml)                       |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

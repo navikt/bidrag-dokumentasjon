@@ -13,10 +13,3 @@ Applikasjon for å hente ut hva skatt har krevd inn, og eventuell gjeld.
 | GitHub           | [navikt/bidrag-skatteetaten](https://github.com/navikt/bidrag-skatteetaten) |
 | Har database     | Nei                                                                         |
 | Kafka-topic      | Nei                                                                         |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

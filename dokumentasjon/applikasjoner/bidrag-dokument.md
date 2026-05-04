@@ -13,10 +13,3 @@ Microservice for integrasjon mellom BISYS og JOARK.
 | GitHub           | [navikt/bidrag-dokument](https://github.com/navikt/bidrag-dokument)              |
 | Har database     | Nei                                                                              |
 | Kafka-topic      | [Ja](https://github.com/navikt/bidrag-kafka/blob/main/topics/dokument-prod.yaml) |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

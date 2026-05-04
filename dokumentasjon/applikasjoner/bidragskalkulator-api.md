@@ -14,10 +14,3 @@ Applikasjonen fungerer som backend for bidrag-bidragskalkulator-ui.
 | GitHub           | [navikt/bidrag-bidragskalkulator-api](https://github.com/navikt/bidrag-bidragskalkulator-api) |
 | Har database     | Nei                                                                                           |
 | Kafka-topic      | Nei                                                                                           |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

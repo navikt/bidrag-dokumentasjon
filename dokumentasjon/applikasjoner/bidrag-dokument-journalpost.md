@@ -12,10 +12,3 @@ Applikasjon for å hente metadata fra midlertidig brevlager (bidrag bisys)
 | GitHub           | [navikt/bidrag-dokument-journalpost](https://github.com/navikt/bidrag-dokument-journalpost)                                                                                                    |
 | Har database     | Nei                                                                                                                                                                                            |
 | Kafka-topic      | [Ja (dokument)](https://github.com/navikt/bidrag-kafka/blob/main/topics/dokument-prod.yaml), [Ja (journalpost)](https://github.com/navikt/bidrag-kafka/blob/main/topics/journalpost-prod.yaml) |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

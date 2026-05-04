@@ -13,10 +13,3 @@ Front-end for bidragskalkulatoren; en applikasjon som hjelper med å beregne bar
 | GitHub           | [bidrag-bidragskalkulator-v2](https://github.com/navikt/bidrag-bidragskalkulator-ui) |
 | Har database     | Nei                                                                                  |
 | Kafka-topic      | Nei                                                                                  |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

@@ -13,10 +13,3 @@ Applikasjon for å generere PDF-dokumenter basert på dokumentmaler og data.
 | GitHub           | [navikt/bidrag-dokument-produksjon](https://github.com/navikt/bidrag-dokument-produksjon) |
 | Har database     | Nei                                                                                      |
 | Kafka-topic      | Nei                                                                                      |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

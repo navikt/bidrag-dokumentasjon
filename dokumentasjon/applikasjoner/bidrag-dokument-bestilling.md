@@ -13,10 +13,3 @@ Applikasjon for å bestille redigerbar og ikke-redigerbare bidrag dokumenter
 | GitHub           | [navikt/bidrag-dokument-bestilling](https://github.com/navikt/bidrag-dokument-bestilling) |
 | Har database     | Nei                                                                                       |
 | Kafka-topic      | Nei                                                                                       |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

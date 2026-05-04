@@ -13,10 +13,3 @@ Applikasjon for å hente ut navn på saksbehandler via LDAP
 | GitHub           | [navikt/bidrag-organisasjon](https://github.com/navikt/bidrag-organisasjon) |
 | Har database     | Nei                                                                         |
 | Kafka-topic      | Nei                                                                         |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

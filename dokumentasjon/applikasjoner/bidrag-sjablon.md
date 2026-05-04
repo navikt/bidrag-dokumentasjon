@@ -13,10 +13,3 @@ Applikasjoner for sjabloner for Bidragsområdet.
 | GitHub           | [navikt/bidrag-sjablon](https://github.com/navikt/bidrag-sjablon) |
 | Har database     | Ja - Bisys database                                               |
 | Kafka-topic      | Nei                                                               |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

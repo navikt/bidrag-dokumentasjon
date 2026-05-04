@@ -13,10 +13,3 @@ Applikasjon for å slå opp saksinformasjon.
 | GitHub           | [navikt/bidrag-sak](https://github.com/navikt/bidrag-sak) |
 | Har database     | Ja, Bisys database                                        |
 | Kafka-topic      | Nei                                                       |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

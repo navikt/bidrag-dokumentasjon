@@ -13,10 +13,3 @@ Applikasjon som brukes for å hente beløp for bidrag beregning fra BBM database
 | GitHub           | [navikt/bidrag-bbm](https://github.com/navikt/bidrag-bbm) |
 | Har database     | Ja - Bisys database                                       |
 | Kafka-topic      | Nei                                                       |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

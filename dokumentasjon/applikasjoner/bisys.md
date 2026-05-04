@@ -13,10 +13,3 @@ Eldre javamonolitt for behandling av alt i bidragsområdet.
 | GitHub           | [bidrag-bisys](https://github.com/navikt/bidrag-bisys) |
 | Har database     | Ja, i DB2. Lykke til.                                  |
 | Kafka-topic      | Nei                                                    |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

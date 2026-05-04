@@ -13,10 +13,3 @@ Mikrotjeneste som fungerer som en facade mot fagarkivet (JOARK) for Bidrag/Farsk
 | GitHub           | [navikt/bidrag-dokument-arkiv](https://github.com/navikt/bidrag-dokument-arkiv)     |
 | Har database     | Nei                                                                                 |
 | Kafka-topic      | [Ja](https://github.com/navikt/bidrag-kafka/blob/main/topics/journalpost-prod.yaml) |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

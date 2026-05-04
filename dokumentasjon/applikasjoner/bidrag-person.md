@@ -13,10 +13,3 @@ Applikasjon for uthenting av personinformasjon.
 | GitHub           | [navikt/bidrag-person](https://github.com/navikt/bidrag-person) |
 | Har database     | Nei                                                             |
 | Kafka-topic      | Nei                                                             |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

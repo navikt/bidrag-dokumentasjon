@@ -13,10 +13,3 @@ Applikasjon for teknisk dokumentasjon av bidragsområdet. Inneholder systemskiss
 | GitHub           | [navikt/bidrag-dokumentasjon](https://github.com/navikt/bidrag-dokumentasjon) |
 | Har database     | Nei                                                                           |
 | Kafka-topic      | Nei                                                                           |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

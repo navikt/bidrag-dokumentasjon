@@ -14,10 +14,3 @@ Bidrag UI er bare et skall grensesnitt som håndterer brukerinnlogging, sesjonsh
 | GitHub           | [navikt/bidrag-ui](https://github.com/navikt/bidrag-ui) |
 | Har database     | Nei                                                     |
 | Kafka-topic      | Nei                                                     |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

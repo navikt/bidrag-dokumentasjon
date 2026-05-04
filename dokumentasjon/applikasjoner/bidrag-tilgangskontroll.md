@@ -13,10 +13,3 @@ Applikasjon for å håndtere tilgangskontroll for bidragsområdet.
 | GitHub           | [navikt/bidrag-tilgangskontroll](https://github.com/navikt/bidrag-tilgangskontroll) |
 | Har database     | Nei                                                                                 |
 | Kafka-topic      | Nei                                                                                 |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-

@@ -13,10 +13,3 @@ Applikasjon for behandling av statistikk for bidragsområdet.
 | GitHub           | [navikt/bidrag-statistikk](https://github.com/navikt/bidrag-statistikk)            |
 | Har database     | Nei                                                                                |
 | Kafka-topic      | [Ja](https://github.com/navikt/bidrag-kafka/blob/main/topics/statistikk-prod.yaml) |
-
-## Viktige integrasjoner
--
-
-## Notater
--
-
