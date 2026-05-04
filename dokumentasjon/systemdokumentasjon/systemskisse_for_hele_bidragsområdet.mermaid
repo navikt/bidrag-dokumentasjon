@@ -2,7 +2,7 @@
 config:
   layout: dagre
 ---
-graph TB
+graph LR
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
@@ -13,7 +13,7 @@ graph TB
     classDef kalkulatorSystem fill:#1A7A4A,color:#fff,stroke:#145f38
 
     subgraph Bidragsområdet["Bidragsområdet"]
-        direction TB
+        direction LR
 
         BidragSjablon["<b>Bidrag-Sjablon</b><br/>Sjablon-satser"]
         BidragPerson["<b>Bidrag-Person</b><br/>Personinformasjon"]
@@ -21,10 +21,7 @@ graph TB
         BidragBbm["<b>Bidrag-BBM</b> 🛢️<br/>Beregningsbeløp"]
         BidragOrganisasjon["<b>Bidrag-Organisasjon</b><br/>Saksbehandlerinfo via LDAP"]
 
-        subgraph NyUI["🖥️ Ny UI (FSS)"]
-            direction LR
-            BidragUi["<b>Bidrag-UI</b><br/>Hovedgrensesnitt"]
-        end
+        BidragUi["<b>Bidrag-UI</b><br/>Hovedgrensesnitt"]
 
         DokumentHandtering["<b>📄 Dokumenthåndtering</b><br/>Se eget diagram"]
 
@@ -40,22 +37,16 @@ graph TB
         BidragPersonHendelse["<b>Bidrag-Person-Hendelse</b> ☕ 🛢️<br/>PDL-hendelser"]
         BidragAutomatiskJobb["<b>Bidrag-Automatisk-Jobb</b> 🛢️<br/>Automatiske batcher"]
         BidragGrunnlag["<b>Bidrag-Grunnlag</b> 🛢️<br/>Innhenting av grunnlag"]
-        BidragKodeverk["<b>Bidrag-Kodeverk</b><br/>Nav kode verk"]
-        BidragStatistikk["<b>Bidrag-Statistikk</b> ☕<br/>Statistikkbehandling"]
-        BidragTilgangskontroll["<b>Bidrag-Tilgangskontroll</b><br/>Tilgangskontroll"]
         BidragVedtak["<b>Bidrag-Vedtak</b> ☕ 🛢️<br/>Vedtaksbehandling"]
 
-        subgraph Utility["⚙️ Utility"]
+        subgraph Utility["⚙️ Utility og støtteapplikasjoner"]
             direction LR
             BidragAdmin["<b>Bidrag-Admin</b> 🛢️<br/>Administrasjonspanel"]
             BidragKafkaManager["<b>Bidrag-Kafka-Manager</b><br/>Kafka-administrasjon"]
             BidragDokumentasjon["<b>Bidrag-Dokumentasjon</b><br/>Teknisk dokumentasjon"]
-        end
-
-        subgraph Reisekostnader["🚗 Reisekostnader"]
-            direction LR
-            BidragReisekostnadApi["<b>Bidrag-Reisekostnad-API</b> 🛢️<br/>Reisekostnader-backend"]
-            BidragReisekostnadUi["<b>Bidrag-Reisekostnad-UI</b><br/>Reisekostnader-frontend"]
+            BidragKodeverk["<b>Bidrag-Kodeverk</b><br/>Nav kode verk"]
+            BidragStatistikk["<b>Bidrag-Statistikk</b> ☕<br/>Statistikkbehandling"]
+            BidragTilgangskontroll["<b>Bidrag-Tilgangskontroll</b><br/>Tilgangskontroll"]
         end
     end
 
@@ -64,8 +55,6 @@ graph TB
     Bisys -->|Oppretter/endrer samhandlere| BidragSamhandler
     Bisys -->|Sender vedtak & henter feilede transaksjoner| BidragRegnskap
     Bisys -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    Bisys -->|Sjekker tilgang| BidragTilgangskontroll
-    Bisys -->|Henter kodeverk| BidragKodeverk
     Bisys -->|Henter grunnlag| BidragGrunnlag
     Bisys -->|Henter beløpshistorikk| BidragBelopshistorikk
     Bisys -->|Henter behandlingsinformasjon| BidragBehandling
@@ -74,11 +63,8 @@ graph TB
 %% Bidrag-UI
     BidragUi -->|Brukergrensesnitt| Bisys
     BidragUi -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragUi -->|Sjekker tilgang| BidragTilgangskontroll
-    BidragUi -->|Henter kodeverk| BidragKodeverk
     BidragUi -->|Henter grunnlag| BidragGrunnlag
     BidragUi -->|Henter behandlingsinformasjon| BidragBehandling
-    BidragUi -->|Administrasjon| BidragAdmin
     BidragUi -->|Dokumenthåndtering| DokumentHandtering
 %% Bidrag-Regnskap
     BidragRegnskap -->|Henter informasjon om BM i sak| BidragSak
@@ -90,19 +76,15 @@ graph TB
     BidragPersonHendelse -->|Personhendelser| BidragAutomatiskJobb
 %% Bidrag-Samhandler
     BidragSamhandler -->|Oppretter/endrer samhandlere| BidragAktoerregister
-    BidragSamhandler -->|Henter kodeverk| BidragKodeverk
 %% Bidrag-Arbeidsflyt
     BidragArbeidsflyt -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragArbeidsflyt -->|Sjekker tilgang| BidragTilgangskontroll
     BidragArbeidsflyt -->|Henter beregningsbeløp| BidragBbm
     BidragArbeidsflyt -->|Henter saksinformasjon| BidragSak
     BidragArbeidsflyt -->|Henter personopplysninger| BidragPerson
     BidragArbeidsflyt -->|Henter dokumenter| DokumentHandtering
 %% Bidrag-Behandling
     BidragBehandling -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragBehandling -->|Sjekker tilgang| BidragTilgangskontroll
     BidragBehandling -->|Henter beregningsbeløp| BidragBbm
-    BidragBehandling -->|Henter kodeverk| BidragKodeverk
     BidragBehandling -->|Henter grunnlag| BidragGrunnlag
     BidragBehandling -->|Henter beløpshistorikk| BidragBelopshistorikk
     BidragBehandling -->|Henter personopplysninger| BidragPerson
@@ -118,7 +100,6 @@ graph TB
     BidragAutomatiskJobb -->|Henter beløpshistorikk| BidragBelopshistorikk
     BidragAutomatiskJobb -->|Henter behandlingsinformasjon| BidragBehandling
     BidragAutomatiskJobb -->|Henter vedtak| BidragVedtak
-    BidragAutomatiskJobb -->|Henter kodeverk| BidragKodeverk
     BidragAutomatiskJobb -->|Henter samhandlerinformasjon| BidragSamhandler
     BidragAutomatiskJobb -->|Henter personopplysninger| BidragPerson
     BidragAutomatiskJobb -->|Henter saksinformasjon| BidragSak
@@ -126,8 +107,6 @@ graph TB
     BidragAutomatiskJobb -->|Oppretter forsendelse| DokumentHandtering
 %% Dokumenthåndtering (utgående til kjernesystemer)
     DokumentHandtering -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    DokumentHandtering -->|Sjekker tilgang| BidragTilgangskontroll
-    DokumentHandtering -->|Henter kodeverk| BidragKodeverk
     DokumentHandtering -->|Henter vedtak| BidragVedtak
     DokumentHandtering -->|Henter behandling| BidragBehandling
     DokumentHandtering -->|Henter samhandlerinformasjon| BidragSamhandler
@@ -140,30 +119,17 @@ graph TB
     BidragVedtak -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
 %% Bidrag-Sak
     BidragSak -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragSak -->|Sjekker tilgang| BidragTilgangskontroll
 %% Bidrag-Organisasjon
-    BidragOrganisasjon -->|Sjekker tilgang| BidragTilgangskontroll
 %% Bidrag-Tilgangskontroll
-    BidragTilgangskontroll -->|Henter saksinformasjon| BidragSak
 %% Bidrag-Statistikk
-    BidragStatistikk -->|Henter vedtak| BidragVedtak
 %% Bidrag-Aktørregister
 %% Bidrag-Belopshistorikk
     BidragBelopshistorikk -->|Henter personopplysninger| BidragPerson
-%% Bidrag-Admin
-    BidragAdmin -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragAdmin -->|Henter vedtak| BidragVedtak
-    BidragAdmin -->|Henter kodeverk| BidragKodeverk
-%% Bidrag-Reisekostnad-API
-    BidragReisekostnadApi -->|Henter dokumenter| DokumentHandtering
-    BidragReisekostnadApi -->|Henter personopplysninger| BidragPerson
-%% Bidrag-Reisekostnad-UI
-    BidragReisekostnadUi --> BidragReisekostnadApi
 
     %% Color assignments
-    class BidragUi,BidragReisekostnadUi frontend
+    class BidragUi frontend
     class BidragSjablon,BidragPerson,BidragSak,BidragBbm,BidragOrganisasjon legacyFSS
-    class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragGrunnlag,BidragVedtak,BidragAdmin,BidragReisekostnadApi withDb
+    class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragGrunnlag,BidragVedtak,BidragAdmin withDb
     class Bisys legacyApp
     class BidragKodeverk,BidragTilgangskontroll,BidragStatistikk,BidragReskontro,BidragKafkaManager,BidragDokumentasjon utility
     class DokumentHandtering docSystem
@@ -188,8 +154,6 @@ graph TB
     click BidragGrunnlag visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragKafkaManager visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragKodeverk visApplikasjon "Åpne applikasjonsbeskrivelse"
-    click BidragReisekostnadApi visApplikasjon "Åpne applikasjonsbeskrivelse"
-    click BidragReisekostnadUi visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragStatistikk visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragTilgangskontroll visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragVedtak visApplikasjon "Åpne applikasjonsbeskrivelse"
@@ -199,8 +163,8 @@ graph TB
     subgraph Legend["📋 Systemforklaring"]
         LegendFrontend["🔵 = Frontend/UI-applikasjon"]
         LegendDb["🟡 = Applikasjon med database 🛢️"]
-        LegendLegacy["🔴 = Legacy/Skya-applikasjon"]
-        LegendFSS["⬛ = FSS/Legacy-tjeneste"]
+        LegendLegacy["🔴 = Legacy-applikasjon"]
+        LegendFSS["⬛ = FSS-applikasjon"]
         LegendUtility["🟢 = Støttetjeneste/Utility"]
         LegendDoc["🟣 = Eget diagram"]
         LegendKafka["☕ = Applikasjon med Kafka topic"]
