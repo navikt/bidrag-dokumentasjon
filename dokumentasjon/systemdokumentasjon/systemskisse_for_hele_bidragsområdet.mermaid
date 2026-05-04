@@ -15,11 +15,7 @@ graph LR
     subgraph Bidragsområdet["Bidragsområdet"]
         direction LR
 
-        BidragSjablon["<b>Bidrag-Sjablon</b><br/>Sjablon-satser"]
-        BidragPerson["<b>Bidrag-Person</b><br/>Personinformasjon"]
-        BidragSak["<b>Bidrag-Sak</b><br/>Saksinformasjon"]
-        BidragBbm["<b>Bidrag-BBM</b> 🛢️<br/>Beregningsbeløp"]
-        BidragOrganisasjon["<b>Bidrag-Organisasjon</b><br/>Saksbehandlerinfo via LDAP"]
+        Grunndata["<b>🗄️ Grunndata</b><br/>Se eget diagram"]
 
         BidragUi["<b>Bidrag-UI</b><br/>Hovedgrensesnitt"]
 
@@ -54,21 +50,18 @@ graph LR
     Bisys -->|Etterspør reskontro & endrer RM| BidragReskontro
     Bisys -->|Oppretter/endrer samhandlere| BidragSamhandler
     Bisys -->|Sender vedtak & henter feilede transaksjoner| BidragRegnskap
-    Bisys -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    Bisys -->|Henter grunnlag| BidragGrunnlag
+    Bisys -->|Henter grunndata| Grunndata
     Bisys -->|Henter beløpshistorikk| BidragBelopshistorikk
     Bisys -->|Henter behandlingsinformasjon| BidragBehandling
     Bisys -->|Starter automatiske jobber| BidragAutomatiskJobb
     Bisys -->|Dokumenthåndtering| DokumentHandtering
 %% Bidrag-UI
     BidragUi -->|Brukergrensesnitt| Bisys
-    BidragUi -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragUi -->|Henter grunnlag| BidragGrunnlag
+    BidragUi -->|Henter grunndata| Grunndata
     BidragUi -->|Henter behandlingsinformasjon| BidragBehandling
     BidragUi -->|Dokumenthåndtering| DokumentHandtering
 %% Bidrag-Regnskap
-    BidragRegnskap -->|Henter informasjon om BM i sak| BidragSak
-    BidragRegnskap -->|Henter personopplysninger| BidragPerson
+    BidragRegnskap -->|Henter grunndata| Grunndata
     BidragRegnskap -->|Henter reskontroinfromasjon| BidragReskontro
 %% Bidrag-Person-Hendelse
     BidragPersonHendelse -->|Personhendelser| BidragAktoerregister
@@ -77,63 +70,47 @@ graph LR
 %% Bidrag-Samhandler
     BidragSamhandler -->|Oppretter/endrer samhandlere| BidragAktoerregister
 %% Bidrag-Arbeidsflyt
-    BidragArbeidsflyt -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragArbeidsflyt -->|Henter beregningsbeløp| BidragBbm
-    BidragArbeidsflyt -->|Henter saksinformasjon| BidragSak
-    BidragArbeidsflyt -->|Henter personopplysninger| BidragPerson
+    BidragArbeidsflyt -->|Henter grunndata| Grunndata
     BidragArbeidsflyt -->|Henter dokumenter| DokumentHandtering
 %% Bidrag-Behandling
-    BidragBehandling -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragBehandling -->|Henter beregningsbeløp| BidragBbm
-    BidragBehandling -->|Henter grunnlag| BidragGrunnlag
+    BidragBehandling -->|Henter grunndata| Grunndata
     BidragBehandling -->|Henter beløpshistorikk| BidragBelopshistorikk
-    BidragBehandling -->|Henter personopplysninger| BidragPerson
-    BidragBehandling -->|Henter saksinformasjon| BidragSak
-    BidragBehandling -->|Henter sjablon satser| BidragSjablon
     BidragBehandling -->|Henter samhandlerinformasjon| BidragSamhandler
     BidragBehandling -->|Henter vedtak| BidragVedtak
     BidragBehandling -->|Dokumenthåndtering| DokumentHandtering
 %% Bidrag-Automatisk-Jobb
-    BidragAutomatiskJobb -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
-    BidragAutomatiskJobb -->|Henter grunnlag| BidragGrunnlag
+    BidragAutomatiskJobb -->|Henter grunndata| Grunndata
     BidragAutomatiskJobb -->|Henter reskontroinfo| BidragReskontro
     BidragAutomatiskJobb -->|Henter beløpshistorikk| BidragBelopshistorikk
     BidragAutomatiskJobb -->|Henter behandlingsinformasjon| BidragBehandling
     BidragAutomatiskJobb -->|Henter vedtak| BidragVedtak
     BidragAutomatiskJobb -->|Henter samhandlerinformasjon| BidragSamhandler
-    BidragAutomatiskJobb -->|Henter personopplysninger| BidragPerson
-    BidragAutomatiskJobb -->|Henter saksinformasjon| BidragSak
-    BidragAutomatiskJobb -->|Henter sjablon satser| BidragSjablon
     BidragAutomatiskJobb -->|Oppretter forsendelse| DokumentHandtering
 %% Dokumenthåndtering (utgående til kjernesystemer)
-    DokumentHandtering -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
+    DokumentHandtering -->|Henter grunndata| Grunndata
     DokumentHandtering -->|Henter vedtak| BidragVedtak
     DokumentHandtering -->|Henter behandling| BidragBehandling
     DokumentHandtering -->|Henter samhandlerinformasjon| BidragSamhandler
-    DokumentHandtering -->|Henter personopplysninger| BidragPerson
-    DokumentHandtering -->|Henter saksinformasjon| BidragSak
     DokumentHandtering -->|Henter reskontroinfo| BidragReskontro
 %% Bidrag-Grunnlag
-    BidragGrunnlag -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
 %% Bidrag-Vedtak
-    BidragVedtak -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
+    BidragVedtak -->|Henter grunndata| Grunndata
 %% Bidrag-Sak
-    BidragSak -->|Henter saksbehandlerinformasjon| BidragOrganisasjon
 %% Bidrag-Organisasjon
 %% Bidrag-Tilgangskontroll
 %% Bidrag-Statistikk
 %% Bidrag-Aktørregister
 %% Bidrag-Belopshistorikk
-    BidragBelopshistorikk -->|Henter personopplysninger| BidragPerson
+    BidragBelopshistorikk -->|Henter grunndata| Grunndata
 
     %% Color assignments
     class BidragUi frontend
-    class BidragSjablon,BidragPerson,BidragSak,BidragBbm,BidragOrganisasjon legacyFSS
-    class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragGrunnlag,BidragVedtak,BidragAdmin withDb
+    class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragVedtak,BidragAdmin withDb
     class Bisys legacyApp
     class BidragKodeverk,BidragTilgangskontroll,BidragStatistikk,BidragReskontro,BidragKafkaManager,BidragDokumentasjon utility
-    class DokumentHandtering docSystem
+    class DokumentHandtering,Grunndata docSystem
 
+    click BidragUi visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragSjablon visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragPerson visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragSak visApplikasjon "Åpne applikasjonsbeskrivelse"
@@ -159,6 +136,7 @@ graph LR
     click BidragVedtak visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragDokumentasjon visApplikasjon "Åpne applikasjonsbeskrivelse"
     click DokumentHandtering visDiagram "Åpne dokumenthåndteringsdiagram"
+    click Grunndata visDiagram "Åpne grunndata-diagram"
 
     subgraph Legend["📋 Systemforklaring"]
         LegendFrontend["🔵 = Frontend/UI-applikasjon"]
