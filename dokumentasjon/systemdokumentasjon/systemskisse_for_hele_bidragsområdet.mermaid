@@ -10,6 +10,7 @@ graph TB
     classDef legacyApp fill:#C0392B,color:#fff,stroke:#922b21
     classDef utility fill:#27AE60,color:#fff,stroke:#1e8449
     classDef docSystem fill:#8E44AD,color:#fff,stroke:#6c3483
+    classDef kalkulatorSystem fill:#1A7A4A,color:#fff,stroke:#145f38
 
     subgraph Bidragsområdet["Bidragsområdet"]
         direction TB
@@ -39,7 +40,7 @@ graph TB
         BidragPersonHendelse["<b>Bidrag-Person-Hendelse</b> ☕ 🛢️<br/>PDL-hendelser"]
         BidragAutomatiskJobb["<b>Bidrag-Automatisk-Jobb</b> 🛢️<br/>Automatiske batcher"]
         BidragGrunnlag["<b>Bidrag-Grunnlag</b> 🛢️<br/>Innhenting av grunnlag"]
-        BidragKodeverk["<b>Bidrag-Kodeverk</b><br/>Nav kodeverk"]
+        BidragKodeverk["<b>Bidrag-Kodeverk</b><br/>Nav kode verk"]
         BidragStatistikk["<b>Bidrag-Statistikk</b> ☕<br/>Statistikkbehandling"]
         BidragTilgangskontroll["<b>Bidrag-Tilgangskontroll</b><br/>Tilgangskontroll"]
         BidragVedtak["<b>Bidrag-Vedtak</b> ☕ 🛢️<br/>Vedtaksbehandling"]
@@ -49,13 +50,6 @@ graph TB
             BidragAdmin["<b>Bidrag-Admin</b> 🛢️<br/>Administrasjonspanel"]
             BidragKafkaManager["<b>Bidrag-Kafka-Manager</b><br/>Kafka-administrasjon"]
             BidragDokumentasjon["<b>Bidrag-Dokumentasjon</b><br/>Teknisk dokumentasjon"]
-        end
-
-        subgraph Bidragskalkulator["🧮 Bidragskalkulator"]
-            direction LR
-            BidragskalkulatorApi["<b>Bidragskalkulator-api</b><br/>Kalkulator-backend"]
-            BidragskalkulatorUi["<b>Bidragskalkulator-Ui</b><br/>Kalkulator-frontend"]
-            BidragskalkulatorV2["<b>Bidragskalkulator-V2</b><br/>Kalkulator-frontend v2"]
         end
 
         subgraph Reisekostnader["🚗 Reisekostnader"]
@@ -165,16 +159,9 @@ graph TB
     BidragReisekostnadApi -->|Henter personopplysninger| BidragPerson
 %% Bidrag-Reisekostnad-UI
     BidragReisekostnadUi --> BidragReisekostnadApi
-%% Bidragskalkulator-API
-    BidragskalkulatorApi -->|Henter personopplysninger| BidragPerson
-    BidragskalkulatorApi -->|Henter sjablon satser| BidragSjablon
-    BidragskalkulatorApi -->|Produserer dokumenter| DokumentHandtering
-    BidragskalkulatorApi -->|Henter grunnlag| BidragGrunnlag
-%% Bidragskalkulator-UI
-    BidragskalkulatorUi --> BidragskalkulatorApi
 
     %% Color assignments
-    class BidragUi,BidragskalkulatorUi,BidragskalkulatorV2,BidragReisekostnadUi frontend
+    class BidragUi,BidragReisekostnadUi frontend
     class BidragSjablon,BidragPerson,BidragSak,BidragBbm,BidragOrganisasjon legacyFSS
     class BidragArbeidsflyt,BidragBehandling,BidragBelopshistorikk,BidragRegnskap,BidragAktoerregister,BidragSamhandler,BidragPersonHendelse,BidragAutomatiskJobb,BidragGrunnlag,BidragVedtak,BidragAdmin,BidragReisekostnadApi withDb
     class Bisys legacyApp
@@ -207,9 +194,6 @@ graph TB
     click BidragTilgangskontroll visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragVedtak visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragDokumentasjon visApplikasjon "Åpne applikasjonsbeskrivelse"
-    click BidragskalkulatorApi visApplikasjon "Åpne applikasjonsbeskrivelse"
-    click BidragskalkulatorUi visApplikasjon "Åpne applikasjonsbeskrivelse"
-    click BidragskalkulatorV2 visApplikasjon "Åpne applikasjonsbeskrivelse"
     click DokumentHandtering visDiagram "Åpne dokumenthåndteringsdiagram"
 
     subgraph Legend["📋 Systemforklaring"]
@@ -218,7 +202,7 @@ graph TB
         LegendLegacy["🔴 = Legacy/Skya-applikasjon"]
         LegendFSS["⬛ = FSS/Legacy-tjeneste"]
         LegendUtility["🟢 = Støttetjeneste/Utility"]
-        LegendDoc["🟣 = Dokumenthåndteringssystem (se eget diagram)"]
+        LegendDoc["🟣 = Eget diagram"]
         LegendKafka["☕ = Applikasjon med Kafka topic"]
         LegendArrows["➜ = Integrasjon/kommunikasjon"]
     end

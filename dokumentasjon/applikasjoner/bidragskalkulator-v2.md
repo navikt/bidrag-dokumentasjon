@@ -1,13 +1,13 @@
-# Bidrag-bidragskalkulator-V2
+# Bidrag-bidragskalkulator-v2
 
 ## Kort beskrivelse
-Applikasjon som hjelper med å beregne barnebidrag.
+Front-end for bidragskalkulatoren; en applikasjon som hjelper med å beregne barnebidrag.
 
 ## Nøkkelinformasjon
 | Felt             | Verdi                                                                                |
 |------------------|--------------------------------------------------------------------------------------|
-| Navn             | Bidrag-bidragskalkulator-V2                                                          |
-| Lenke            | https://bidrag-bidragskalkulator-v2.intern.nav.no/ |
+| Navn             | Bidragskalkulator-v2                                                                 |
+| Lenke            | https://bidrag-bidragskalkulator-v2.intern.nav.no/                                   |
 | Applikasjonstype | Frontend-tjeneste                                                                    |
 | Driftsområde     | GCP                                                                                  |
 | GitHub           | [bidrag-bidragskalkulator-v2](https://github.com/navikt/bidrag-bidragskalkulator-ui) |
