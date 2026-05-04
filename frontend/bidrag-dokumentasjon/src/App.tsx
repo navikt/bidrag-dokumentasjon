@@ -27,8 +27,11 @@ const GITHUB_REPO = "bidrag-dokumentasjon";
 const GITHUB_ROOT_PATH = "dokumentasjon";
 const LOCAL_INDEX_PATH = `${GITHUB_ROOT_PATH}/index.json`;
 const APPLICATION_DOCS_PATH = `${GITHUB_ROOT_PATH}/applikasjoner`;
+const SYSTEM_DOCS_PATH = `${GITHUB_ROOT_PATH}/systemdokumentasjon`;
 let applicationDocumentIndexCache: Record<string, string> | null = null;
 let applicationDocumentIndexPromise: Promise<Record<string, string>> | null = null;
+let diagramDocumentIndexCache: Record<string, string> | null = null;
+let diagramDocumentIndexPromise: Promise<Record<string, string>> | null = null;
 let localContentIndexCache: Record<string, GithubContent[]> | null = null;
 let localContentIndexPromise: Promise<Record<string, GithubContent[]>> | null = null;
 type GithubRequestError = {
@@ -75,7 +78,9 @@ type Content = {
 interface AppContextType {
   showContent?: Content;
   expandedFolders: string[];
+  selectedItem: string | null;
   setExpandedFolders: Dispatch<SetStateAction<string[]>>;
+  setSelectedItem: Dispatch<SetStateAction<string | null>>;
   setShowContent: (content: Content) => void;
   resetContent: () => void;
 }
@@ -238,7 +243,9 @@ function ensureRootFolders(content: GithubContent[]): GithubContent[] {
 }
 
 function normalizeApplicationKey(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return value.toLowerCase()
+  .replace(/å/g, "a").replace(/ø/g, "o").replace(/æ/g, "ae")
+  .replace(/[^a-z0-9]/g, "");
 }
 
 function toKebabCase(value: string): string {
@@ -294,6 +301,52 @@ async function resolveApplicationDocumentPath(applicationId: string): Promise<st
   }
 }
 
+function buildDiagramDocumentIndex(content: GithubContent[]): Record<string, string> {
+  const index: Record<string, string> = {};
+
+  content
+  .filter((item) => item.type === "file")
+  .filter((item) => item.name.endsWith(".mermaid"))
+  .forEach((item) => {
+    const fileNameWithoutExt = item.name.replace(/\.mermaid$/, "");
+    index[normalizeApplicationKey(fileNameWithoutExt)] = item.path;
+  });
+
+  return index;
+}
+
+async function getDiagramDocumentIndex(): Promise<Record<string, string>> {
+  if (diagramDocumentIndexCache) {
+    return diagramDocumentIndexCache;
+  }
+
+  if (!diagramDocumentIndexPromise) {
+    diagramDocumentIndexPromise = getLocalFolderContent(SYSTEM_DOCS_PATH)
+    .then((content) => {
+      const index = buildDiagramDocumentIndex(content);
+      diagramDocumentIndexCache = index;
+      return index;
+    })
+    .finally(() => {
+      diagramDocumentIndexPromise = null;
+    });
+  }
+
+  return diagramDocumentIndexPromise;
+}
+
+async function resolveDiagramPath(nodeId: string): Promise<string | undefined> {
+  try {
+    const index = await getDiagramDocumentIndex();
+    const directKey = normalizeApplicationKey(nodeId);
+    const kebabKey = normalizeApplicationKey(toKebabCase(nodeId));
+
+    return index[directKey] ?? index[kebabKey];
+  } catch {
+    return undefined;
+  }
+}
+
 function TreeLabel({name, badge}: { name: string; badge: string }) {
   const isFile = badge === "fil";
   const displayName = formatSidebarName(name, isFile);
@@ -339,14 +392,16 @@ export const useAppContext = () => {
 export default function DokumentasjonPage() {
   const [showContent, setShowContent] = useState<Content | undefined>();
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
 
   function resetContent() {
     setShowContent(undefined);
+    setSelectedItem(null);
   }
 
   return (
-      <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders, resetContent}}>
+      <AppContext.Provider value={{showContent, setShowContent, setExpandedFolders, expandedFolders, selectedItem, setSelectedItem, resetContent}}>
         <div className="app-shell h-full w-full flex flex-row [&_svg]:max-w-full!">
           {isExpanded ? (
               <aside className="sidebar-container">
@@ -392,7 +447,7 @@ export default function DokumentasjonPage() {
 }
 
 function GithubTreeView() {
-  const {setShowContent, expandedFolders, setExpandedFolders} = useAppContext();
+  const {setShowContent, expandedFolders, setExpandedFolders, selectedItem, setSelectedItem} = useAppContext();
 
   async function updateShowedContent(_event: SyntheticEvent, itemId: string) {
     if (itemId.startsWith("folder_")) {
@@ -411,6 +466,7 @@ function GithubTreeView() {
 
     const filePath = getPathFromFileItemId(itemId);
 
+    setSelectedItem(itemId);
     try {
       const data = await fetchGithubTextByPath(filePath);
       setShowContent({content: data, type: filePath.endsWith(".mermaid") ? "mermaid" : "markdown"});
@@ -446,6 +502,7 @@ function GithubTreeView() {
             <div className="tree-shell">
               <SimpleTreeView
                   expandedItems={expandedFolders}
+                  selectedItems={selectedItem}
                   onItemClick={(event, itemId) => {
                     void updateShowedContent(event, itemId);
                   }}
@@ -550,10 +607,13 @@ function LandingPage() {
 
 function MermaidChart() {
   const {showContent, setShowContent} = useAppContext();
+  const {setExpandedFolders, setSelectedItem} = useAppContext();
   const [showDetailsMarkdown, setShowDetailsMarkdown] = useState<string | null>(null);
 
   const isRendering = useRef(false);
   const divRef = useRef<HTMLPreElement>(null);
+  const renderCount = useRef(0);
+  const panZoomInstance = useRef<ReturnType<typeof svgPanZoom> | null>(null);
 
   useEffect(() => {
     window.callbackKotlin = (link: string) => {
@@ -599,25 +659,75 @@ function MermaidChart() {
         }
       })();
     };
+    window.visDiagram = (nodeId: string) => {
+      void (async () => {
+        try {
+          const diagramPath = await resolveDiagramPath(nodeId);
+          if (!diagramPath) {
+            setShowContent({
+              content: `# Diagram ikke funnet\n\nFant ingen diagramfil for **${nodeId}** i systemdokumentasjon.\n\nLegg til en \`.mermaid\`-fil med navn som matcher node-IDen.`,
+              type: "markdown",
+            });
+            return;
+          }
+          const data = await fetchGithubTextByPath(diagramPath);
+          // Clear active/pressed state and expand + select in the sidebar
+          (document.activeElement as HTMLElement)?.blur();
+          const folderPath = diagramPath.split("/").slice(0, -1).join("/");
+          const folderId = `folder_${folderPath}`;
+          const fileItemId = `file_${diagramPath}`;
+          setSelectedItem(null); // clear first to force visual reset
+          setExpandedFolders((prev) => prev.includes(folderId) ? prev : [...prev, folderId]);
+          setTimeout(() => {
+            setSelectedItem(fileItemId);
+            document.querySelector(`[data-id="${CSS.escape(fileItemId)}"]`)
+            ?.scrollIntoView({behavior: "smooth", block: "nearest"});
+          }, 50);
+          setShowContent({content: data, type: "mermaid"});
+        } catch {
+          setShowContent({
+            content: `# Klarte ikke å hente diagram\n\nDiagramfilen for **${nodeId}** kunne ikke lastes.`,
+            type: "markdown",
+          });
+        }
+      })();
+    };
 
     return () => {
       delete window.callbackKotlin;
       delete window.visGrunnlag;
       delete window.visMarkdown;
       delete window.visApplikasjon;
+      delete window.visDiagram;
     };
   }, [setShowContent]);
 
   useEffect(() => {
     if (!showContent) return;
     if (showContent.type !== "mermaid") {
+      if (panZoomInstance.current) {
+        try { panZoomInstance.current.destroy(); } catch { /* ignore */ }
+        panZoomInstance.current = null;
+      }
       document.getElementById("mermaidSvg")?.remove();
       return;
     }
 
+    // Destroy previous svgPanZoom instance and remove old SVG
+    if (panZoomInstance.current) {
+      try { panZoomInstance.current.destroy(); } catch { /* ignore */ }
+      panZoomInstance.current = null;
+    }
+    if (divRef.current) {
+      divRef.current.innerHTML = "";
+    }
+
+    // Use a unique id per render to avoid Mermaid "id already exists" errors
+    const svgId = `mermaidSvg_${++renderCount.current}`;
+
     isRendering.current = true;
     mermaid
-    .render("mermaidSvg", showContent.content, divRef.current)
+    .render(svgId, showContent.content, divRef.current)
     .then((res) => {
       if (!divRef.current) return;
 
@@ -625,10 +735,14 @@ function MermaidChart() {
       if (res.bindFunctions) {
         res.bindFunctions(divRef.current.firstElementChild as Element);
       }
-      svgPanZoom("#mermaidSvg");
+      try {
+        panZoomInstance.current = svgPanZoom(`#${svgId}`);
+      } catch (e) {
+        console.warn("[mermaid] svgPanZoom init failed (non-fatal):", e);
+      }
     })
     .catch((error) => {
-      console.error("Klarte ikke å rendre Mermaid-diagram", error);
+      console.error("[mermaid] render failed:", error);
       setShowContent({content: createMermaidRenderErrorMarkdown(), type: "markdown"});
     });
   }, [setShowContent, showContent]);

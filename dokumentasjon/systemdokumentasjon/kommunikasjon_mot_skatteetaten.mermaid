@@ -2,29 +2,39 @@
 config:
   layout: fixed
 ---
-graph LR
+graph TB
 
-    Bisys["<b>Bisys</b><br/>Fatter vedtak"]
-    BidragRegnskap["<b>Bidrag-Regnskap</b><br/>Transformerer bidragsvedtak<br/>til krav"]
-    BidragReskontro["<b>Bidrag-Reskontro</b></br/>Henter og transformerer informasjon fra reskontro"]
-    BidragAktoerregister["<b>Bidrag-Aktørregister</b></br/>Innholder informasjon om alle aktører i bidragssaker. Involverer samhandlere, personer, og HAAG/Utlands informasjon som ikke finnes i folkeregisteret/PDL."]
-    BidragPerson["<b>Bidrag-Person</b></br/>Sammenstiller personinformasjon"]
-    BidragSamhandler["<b>Bidrag-Samhandler</b></br/>Informasjon om bidragssamhandlere (Tidligere TSS-identer)"]
+    classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
+    classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
+    classDef withDb fill:#E8A838,color:#fff,stroke:#b5852a
+    classDef legacyApp fill:#C0392B,color:#fff,stroke:#922b21
+    classDef utility fill:#27AE60,color:#fff,stroke:#1e8449
+    classDef external fill:#BDC3C7,color:#333,stroke:#95A5A6,stroke-dasharray: 5 5
 
-    subgraph Skatt
-        BisysReskRest["<b>BisysReskRest</b>"]
-        AvstemOppdrag["<b>AvstemOppdrag</b>"]
-        TolkingClient["<b>TolkingClient</b>"]
-        Tolking2Predator["<b>Tolking2Predator</b><br/>Mottar krav via /api/krav fra bidrag-regnskap"]
+    subgraph Kommunikasjon["Kommunikasjon mot Skatteetaten"]
+        direction TB
 
-    end
+        Bisys["<b>Bisys</b><br/>Fatter vedtak"]
+        BidragRegnskap["<b>Bidrag-Regnskap</b> 🛢️<br/>Transformerer bidragsvedtak<br/>til krav"]
+        BidragReskontro["<b>Bidrag-Reskontro</b><br/>Henter og transformerer informasjon fra reskontro"]
+        BidragAktoerregister["<b>Bidrag-Aktørregister</b> 🛢️<br/>Innholder informasjon om alle aktører i bidragssaker. Involverer samhandlere, personer, og HAAG/Utlands informasjon som ikke finnes i folkeregisteret/PDL."]
+        BidragPerson["<b>Bidrag-Person</b><br/>Sammenstiller personinformasjon"]
+        BidragSamhandler["<b>Bidrag-Samhandler</b> ☕ 🛢️<br/>Informasjon om bidragssamhandlere (Tidligere TSS-identer)"]
 
-    SFTPFilsluse["<b>SFTP-filsluse</b><br/>Område for å laste opp filer"]
+        subgraph Skatt
+            BisysReskRest["<b>BisysReskRest</b>"]
+            AvstemOppdrag["<b>AvstemOppdrag</b>"]
+            TolkingClient["<b>TolkingClient</b>"]
+            Tolking2Predator["<b>Tolking2Predator</b><br/>Mottar krav via /api/krav fra bidrag-regnskap"]
+        end
 
-    subgraph Eksterne Tjenester
-        KKR["<b>Kontakt og reservasjonsregisteret</b></br/>Informasjon om språk"]
-        SokosKontoregister["<b>Sokos-kontoregister</b></br/>Informasjon om registrerte kontoopplysninger"]
-        PDL["<b>PDL</b></br/>Informasjon om personopplysninger, herunder identer, adresser, dødsbo mm."]
+        SFTPFilsluse["<b>SFTP-filsluse</b><br/>Område for å laste opp filer"]
+
+        subgraph Eksterne Tjenester
+            KKR["<b>Kontakt og reservasjonsregisteret</b><br/>Informasjon om språk"]
+            SokosKontoregister["<b>Sokos-kontoregister</b><br/>Informasjon om registrerte kontoopplysninger"]
+            PDL["<b>PDL</b><br/>Informasjon om personopplysninger, herunder identer, adresser, dødsbo mm."]
+        end
     end
 
 
@@ -59,3 +69,20 @@ graph LR
     click BidragAktoerregister visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragReskontro visApplikasjon "Åpne applikasjonsbeskrivelse"
     click BidragRegnskap visApplikasjon "Åpne applikasjonsbeskrivelse"
+
+    %% Color assignments
+    class Bisys legacyApp
+    class BidragRegnskap,BidragAktoerregister,BidragSamhandler withDb
+    class BidragPerson legacyFSS
+    class BidragReskontro utility
+    class BisysReskRest,AvstemOppdrag,TolkingClient,Tolking2Predator,SFTPFilsluse,KKR,SokosKontoregister,PDL external
+
+    subgraph Legend["📋 Systemforklaring"]
+        LegendDb["🟡 = Applikasjon med database 🛢️"]
+        LegendLegacy["🔴 = Legacy-applikasjon"]
+        LegendFSS["⬛ = FSS-tjeneste"]
+        LegendUtility["🟢 = Støttetjeneste"]
+        LegendExternal["⬜ = Eksternt system (utenfor Bidrag)"]
+        LegendArrows["➜ = Integrasjon/kommunikasjon"]
+    end
+

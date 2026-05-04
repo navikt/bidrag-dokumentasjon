@@ -5,5 +5,6 @@ interface Window {
   visGrunnlag?: (link: string) => void;
   visMarkdown?: (innhold: string) => void;
   visApplikasjon?: (applicationId: string) => void;
+  visDiagram?: (diagramPath: string) => void;
 }
 
