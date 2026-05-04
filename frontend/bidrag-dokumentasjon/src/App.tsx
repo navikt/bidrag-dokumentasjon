@@ -4,7 +4,7 @@ import "highlight.js/styles/default.css";
 import {ChevronLeftIcon, ChevronRightLastIcon} from "@navikt/aksel-icons";
 import {TreeItem} from "@mui/x-tree-view";
 import {SimpleTreeView} from "@mui/x-tree-view/SimpleTreeView";
-import {Alert, BodyShort, Button, Heading, Loader, Modal, VStack} from "@navikt/ds-react";
+import {Alert, BodyShort, Button, Heading, Loader, VStack} from "@navikt/ds-react";
 import {useQuery} from "@tanstack/react-query";
 import mermaid from "mermaid";
 import {createContext, Dispatch, SetStateAction, SyntheticEvent, useContext, useEffect, useRef, useState} from "react";
@@ -609,6 +609,7 @@ function MermaidChart() {
   const {showContent, setShowContent} = useAppContext();
   const {setExpandedFolders, setSelectedItem} = useAppContext();
   const [showDetailsMarkdown, setShowDetailsMarkdown] = useState<string | null>(null);
+  const currentClickedNodeRef = useRef<string | null>(null);
 
   const isRendering = useRef(false);
   const divRef = useRef<HTMLPreElement>(null);
@@ -641,6 +642,13 @@ function MermaidChart() {
       setShowDetailsMarkdown(innhold.replace(/ +/g, " "));
     };
     window.visApplikasjon = (applicationId: string) => {
+      if (currentClickedNodeRef.current === applicationId && document.getElementById("details-markdown-container")) {
+        setShowDetailsMarkdown(null);
+        currentClickedNodeRef.current = null;
+        return;
+      }
+      currentClickedNodeRef.current = applicationId;
+
       setShowDetailsMarkdown(`# Laster applikasjonsbeskrivelse\n\nHenter **${applicationId}** ...`);
 
       void (async () => {
@@ -748,20 +756,7 @@ function MermaidChart() {
   }, [setShowContent, showContent]);
 
   return (
-      <>
-        <Modal
-            aria-label="Detaljvisning"
-            style={{maxHeight: "1000px", maxWidth: "max-content"}}
-            open={showDetailsMarkdown !== null}
-            closeOnBackdropClick
-            onClose={() => setShowDetailsMarkdown(null)}
-        >
-          <Modal.Body>
-            <Markdown components={MarkdownComponents} remarkPlugins={[remarkGfm]} rehypePlugins={[remarkRaw]}>
-              {showDetailsMarkdown}
-            </Markdown>
-          </Modal.Body>
-        </Modal>
+      <div className="relative flex flex-1 h-full w-full overflow-hidden bg-white">
         {showContent?.type === "mermaid" ? (
             <pre ref={divRef} className="mermaid h-full grow w-full max-w-full [&_svg]:max-w-full!"/>
         ) : showContent ? (
@@ -773,6 +768,28 @@ function MermaidChart() {
         ) : (
             <LandingPage/>
         )}
-      </>
+
+        {showDetailsMarkdown !== null && (
+            <div className="absolute top-0 right-0 h-full w-150 max-w-[90%] bg-white border-l shadow-2xl p-6 overflow-y-auto z-50 flex flex-col gap-4">
+              <div className="flex justify-end">
+                <Button
+                    size="small"
+                    variant="tertiary-neutral"
+                    onClick={() => {
+                      setShowDetailsMarkdown(null);
+                      currentClickedNodeRef.current = null;
+                    }}
+                >
+                  Lukk
+                </Button>
+              </div>
+              <div id="details-markdown-container" className="flex-1">
+                <Markdown components={MarkdownComponents} remarkPlugins={[remarkGfm]} rehypePlugins={[remarkRaw]}>
+                  {showDetailsMarkdown}
+                </Markdown>
+              </div>
+            </div>
+        )}
+      </div>
   );
 }
