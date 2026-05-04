@@ -2,7 +2,7 @@
 config:
   layout: fixed
 ---
-graph TB
+graph LR
 
     classDef frontend fill:#4A90D9,color:#fff,stroke:#2c6fad
     classDef legacyFSS fill:#7F8C8D,color:#fff,stroke:#566573
@@ -12,7 +12,7 @@ graph TB
     classDef external fill:#BDC3C7,color:#333,stroke:#95A5A6,stroke-dasharray: 5 5
 
     subgraph Dokumenthåndtering["📄 Dokumenthåndtering"]
-        direction TB
+        direction LR
 
         BidragDokument["<b>Bidrag-Dokument</b> ☕<br/>Bisys/JOARK-integrasjon"]
         BidragDokumentArkiv["<b>Bidrag-Dokument-Arkiv</b> ☕<br/>Fagarkiv-facade (JOARK)"]
