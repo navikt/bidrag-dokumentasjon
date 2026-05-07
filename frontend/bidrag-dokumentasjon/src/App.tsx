@@ -15,6 +15,7 @@ import svgPanZoom from "svg-pan-zoom";
 import {MarkdownComponents} from "./components/CustomMarkdown.tsx";
 import {KafkaTopicsFolderItem} from "./components/KafkaTopicsSection.tsx";
 import {AutomatiskeJobberFolderItem} from "./components/AutomatiskeJobberSection.tsx";
+import {TilgangskontrollFolderItem} from "./components/TilgangskontrollSection.tsx";
 
 mermaid.initialize({
   startOnLoad: true,
@@ -501,7 +502,7 @@ function GithubTreeView() {
   const files = sortedContent.filter((file) => file.type === "file");
   const folders = sortedContent
   .filter((file) => file.type === "dir")
-  .filter((folder) => folder.name !== ".github" && folder.name !== "frontend");
+  .filter((folder) => folder.name !== ".github" && folder.name !== "frontend" && folder.name !== "tilgangskontroll");
 
   return (
       <VStack gap="space-4" className="github-section">
@@ -525,6 +526,7 @@ function GithubTreeView() {
                 {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
                 <KafkaTopicsFolderItem/>
                 <AutomatiskeJobberFolderItem/>
+                <TilgangskontrollFolderItem/>
               </SimpleTreeView>
             </div>
         )}
