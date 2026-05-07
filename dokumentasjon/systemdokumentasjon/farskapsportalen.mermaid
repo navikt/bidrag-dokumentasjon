@@ -14,8 +14,8 @@ graph LR
         Oppgave["<b>oppgave</b><br/>"]:::external
         Signering["<b>api.signering.posten.no</b><br/>Ekstern – Posten/Brings signeringstjeneste"]:::external
         Folkeregisteret["<b>folkeregisteret.api.skatteetaten.no</b><br/>Ekstern – Skatteetaten folkeregister"]:::external
-        FarskapsportalenUi -->|inbound| FarskapsportalenApi
-        Statuspoll -->|inbound| FarskapsportalenApi
+        FarskapsportalenUi --> FarskapsportalenApi
+        Statuspoll --> FarskapsportalenApi
         FarskapsportalenApi --> Signering
         FarskapsportalenApi --> Folkeregisteret
         FarskapsportalenApi --> Oppgave
