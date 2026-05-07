@@ -8,10 +8,19 @@ const KAFKA_RAW_BASE_URL = "https://raw.githubusercontent.com/navikt/bidrag-kafk
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 export const KAFKA_FOLDER_ID = "folder_kafkatopics";
 
+/** Extra topic files from other repos – fetched in addition to bidrag-kafka/topics */
+const EXTRA_TOPICS: Array<{name: string; rawUrl: string}> = [
+    {
+        name: "personhendelse.v1-prod.yaml",
+        rawUrl: "https://raw.githubusercontent.com/navikt/bidrag-person-hendelse/main/.nais/kafka/personhendelse.v1/topic_prod.yml",
+    },
+];
+
 interface GithubFileEntry {
     name: string;
     download_url: string | null;
     type: string;
+    rawUrl?: string; // set for extra topics from other repos
 }
 
 interface NaisAclEntry {
@@ -114,40 +123,47 @@ export function KafkaTopicsFolderItem() {
             const response = await fetch(KAFKA_TOPICS_API_URL);
             if (!response.ok) throw new Error(`GitHub svarte med ${response.status}`);
             const data = await response.json() as GithubFileEntry[];
-            return data
+            const main = data
                 .filter((f) => f.type === "file" && f.name.endsWith("-prod.yaml"))
                 .sort((a, b) => a.name.localeCompare(b.name, "nb"));
+            const extras: GithubFileEntry[] = EXTRA_TOPICS.map((t) => ({
+                name: t.name,
+                download_url: t.rawUrl,
+                type: "file",
+                rawUrl: t.rawUrl,
+            }));
+            return [...main, ...extras];
         },
     });
 
-    async function handleTopicClick(fileName: string) {
-        setSelectedItem(`kafkatopic_${fileName}`);
+    async function handleTopicClick(file: GithubFileEntry) {
+        setSelectedItem(`kafkatopic_${file.name}`);
         try {
-            const rawUrl = `${KAFKA_RAW_BASE_URL}/${encodeURIComponent(fileName)}`;
+            const rawUrl = file.rawUrl ?? `${KAFKA_RAW_BASE_URL}/${encodeURIComponent(file.name)}`;
             const content = await queryClient.fetchQuery<string>({
-                queryKey: ["kafkaTopicContent", fileName],
+                queryKey: ["kafkaTopicContent", file.name],
                 staleTime: ONE_DAY_MS,
                 gcTime: ONE_DAY_MS,
                 queryFn: async () => {
                     const response = await fetch(rawUrl);
-                    if (!response.ok) throw new Error(`Klarte ikke hente ${fileName}: ${response.status}`);
+                    if (!response.ok) throw new Error(`Klarte ikke hente ${file.name}: ${response.status}`);
                     return response.text();
                 },
             });
 
             const parsed = yaml.load(content) as NaisTopic;
-            const topicName = parsed?.metadata?.name ?? formatTopicDisplayName(fileName);
+            const topicName = parsed?.metadata?.name ?? formatTopicDisplayName(file.name);
             const acl = parsed?.spec?.acl ?? [];
 
             if (acl.length === 0) {
-                setShowContent({type: "markdown", content: `# ${topicName}\n\nIngen ACL-regler funnet i \`${fileName}\`.`});
+                setShowContent({type: "markdown", content: `# ${topicName}\n\nIngen ACL-regler funnet i \`${file.name}\`.`});
                 return;
             }
             setShowContent({type: "mermaid", content: generateKafkaMermaid(topicName, acl)});
         } catch (err) {
             setShowContent({
                 type: "markdown",
-                content: `# Klarte ikke laste topic\n\nFilen **${fileName}** kunne ikke hentes eller tolkes.\n\n\`${err instanceof Error ? err.message : String(err)}\``,
+                content: `# Klarte ikke laste topic\n\nFilen **${file.name}** kunne ikke hentes eller tolkes.\n\n\`${err instanceof Error ? err.message : String(err)}\``,
             });
         }
     }
@@ -183,7 +199,7 @@ export function KafkaTopicsFolderItem() {
                     key={file.name}
                     itemId={`kafkatopic_${file.name}`}
                     label={<TopicLabel name={formatTopicDisplayName(file.name)}/>}
-                    onClick={() => void handleTopicClick(file.name)}
+                    onClick={() => void handleTopicClick(file)}
                 />
             ))}
         </TreeItem>
