@@ -200,7 +200,7 @@ export function AutomatiskeJobberFolderItem() {
     }, {});
 
     return (
-        <TreeItem itemId={AUTO_JOBB_FOLDER_ID} label={<FolderLabel name="⚙️ Automatiske Jobber"/>}>
+        <TreeItem itemId={AUTO_JOBB_FOLDER_ID} label={<FolderLabel name="Automatiske Jobber"/>}>
             {isExpanded && isLoading && jobs.length === 0 ? (
                 <TreeItem
                     itemId="autojobb_loading"

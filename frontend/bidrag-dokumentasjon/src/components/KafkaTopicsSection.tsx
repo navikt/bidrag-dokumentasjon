@@ -153,7 +153,7 @@ export function KafkaTopicsFolderItem() {
     }
 
     return (
-        <TreeItem itemId={KAFKA_FOLDER_ID} label={<FolderLabel name="☕ Kafka Topics"/>}>
+        <TreeItem itemId={KAFKA_FOLDER_ID} label={<FolderLabel name="Kafka Topics"/>}>
             {isExpanded && isLoading && topicFiles.length === 0 ? (
                 <TreeItem
                     itemId="kafka_loading"
