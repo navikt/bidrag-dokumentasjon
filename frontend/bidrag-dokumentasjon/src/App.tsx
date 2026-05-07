@@ -13,6 +13,7 @@ import remarkRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import svgPanZoom from "svg-pan-zoom";
 import {MarkdownComponents} from "./components/CustomMarkdown.tsx";
+import {KAFKA_FOLDER_ID, KafkaTopicsFolderItem} from "./components/KafkaTopicsSection.tsx";
 
 mermaid.initialize({
   startOnLoad: true,
@@ -460,6 +461,11 @@ function GithubTreeView() {
       return;
     }
 
+    // Kafka items handled via their own onClick – skip here
+    if (itemId.startsWith("kafkatopic_") || itemId === "kafka_loading" || itemId === "kafka_error") {
+      return;
+    }
+
     if (!itemId.startsWith("file_")) {
       return;
     }
@@ -511,6 +517,7 @@ function GithubTreeView() {
                     <TreeItem key={file.path} itemId={getFileItemId(file.path)} label={<TreeLabel name={file.name} badge="fil"/>}/>
                 ))}
                 {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
+                <KafkaTopicsFolderItem/>
               </SimpleTreeView>
             </div>
         )}
