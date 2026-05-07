@@ -13,7 +13,8 @@ import remarkRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import svgPanZoom from "svg-pan-zoom";
 import {MarkdownComponents} from "./components/CustomMarkdown.tsx";
-import {KAFKA_FOLDER_ID, KafkaTopicsFolderItem} from "./components/KafkaTopicsSection.tsx";
+import {KafkaTopicsFolderItem} from "./components/KafkaTopicsSection.tsx";
+import {AutomatiskeJobberFolderItem} from "./components/AutomatiskeJobberSection.tsx";
 
 mermaid.initialize({
   startOnLoad: true,
@@ -466,6 +467,11 @@ function GithubTreeView() {
       return;
     }
 
+    // Automatiske jobber items handled via their own onClick – skip here
+    if (itemId.startsWith("autojobb_") || itemId === "autojobb_loading" || itemId === "autojobb_error") {
+      return;
+    }
+
     if (!itemId.startsWith("file_")) {
       return;
     }
@@ -518,6 +524,7 @@ function GithubTreeView() {
                 ))}
                 {folders.map((folder) => <GithubTree key={folder.path} folder={folder}/>)}
                 <KafkaTopicsFolderItem/>
+                <AutomatiskeJobberFolderItem/>
               </SimpleTreeView>
             </div>
         )}
