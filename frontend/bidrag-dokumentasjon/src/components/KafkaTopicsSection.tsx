@@ -114,7 +114,8 @@ export function KafkaTopicsFolderItem() {
     const isExpanded = expandedFolders.includes(KAFKA_FOLDER_ID);
 
     const {data: topicFiles = [], isLoading, error} = useQuery<GithubFileEntry[]>({
-        queryKey: ["kafkaTopicsList"],
+        // Include extra topic names in the key so cache is invalidated when EXTRA_TOPICS changes
+        queryKey: ["kafkaTopicsList", ...EXTRA_TOPICS.map((t) => t.name)],
         enabled: isExpanded,
         staleTime: ONE_DAY_MS,
         gcTime: ONE_DAY_MS,
