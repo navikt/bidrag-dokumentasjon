@@ -34,7 +34,7 @@
     "cronstrue": "^3.14.0",
     "echarts": "^6.0.0",
     "idb-keyval": "^6.2.2",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^4.2.0",
     "marked-react": "^4.0.0",
     "mermaid": "^11.14.0",
     "octokit": "^5.0.5",
