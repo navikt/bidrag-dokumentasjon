@@ -32,7 +32,7 @@
     "@types/lodash": "^4.17.24",
     "@unleash/proxy-client-react": "^5.0.1",
     "cronstrue": "^3.14.0",
-    "echarts": "^6.0.0",
+    "echarts": "^6.1.0",
     "idb-keyval": "^6.2.2",
     "js-yaml": "^4.1.1",
     "marked-react": "^4.0.0",
