@@ -36,7 +36,7 @@
     "idb-keyval": "^6.2.2",
     "js-yaml": "^4.1.1",
     "marked-react": "^4.0.0",
-    "mermaid": "^11.14.0",
+    "mermaid": "^11.16.1",
     "octokit": "^5.0.5",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
