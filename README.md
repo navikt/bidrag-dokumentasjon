@@ -1,5 +1,10 @@
 # Bidrag-Dokumentasjon
 
+## ⚠️ DETTE REPOET ER FLYTTET
+
+> **Dette repoet er flyttet til [navikt/bidrag-backend](https://github.com/navikt/bidrag-backend).**
+> Bruk det nye repoet for videre utvikling — dette repoet oppdateres ikke lenger.
+
 Bidrag-dokumentasjon er et verktøy for å presentere, utforske og lese teknisk dokumentasjon, systemskisser og flytdiagrammer for NAVs bidragsløsning. 
 
 Applikasjonen gjør det mulig å:
